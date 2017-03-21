@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+    <apikit:config name="auth-config" raml="auth.raml" consoleEnabled="false" doc:name="Router"/>
+    <flow name="auth-main">
+        <http:listener config-ref="DomainHttpListenerConfiguration" path="/api/*" doc:name="HTTP"/>
+        <apikit:router config-ref="auth-config" doc:name="APIkit Router"/>
+        <exception-strategy ref="auth-apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy"/>
+    </flow>
+    <flow name="auth-console">
+        <http:listener config-ref="DomainHttpListenerConfiguration" path="/console/*" doc:name="HTTP"/>
+        <apikit:console config-ref="auth-config" doc:name="APIkit Console"/>
+    </flow>
+    <flow name="get:/auth/chkAgreementStatus/patientId/{id}:auth-config">
+        <set-payload value="{&#xA;   &quot;status&quot;: &quot;true&quot;,&#xA;   &quot;agreementStatus&quot;: &quot;Accepted&quot;,&#xA;   &quot;message&quot; : &quot;Terms &amp; conditions already accepted&quot;,&#xA;   &quot;statusCode&quot;: &quot;200&quot;&#xA;}" doc:name="Set Payload"/>
+    </flow>
+    <flow name="get:/auth/userDetail/patientId/{id}:auth-config">
+        <set-payload value="{&#xA;&quot;status&quot;: &quot;true&quot;,&#xA;&quot;message&quot;: &quot;User info fetched&quot;,&#xA;&quot;statusCode&quot;: &quot;200&quot;,&#xA;&quot;data&quot;: {&#xA;   &quot;patientId&quot;: &quot;1&quot;,&#xA;   &quot;name&quot;: &quot;Ashish&quot;,&#xA;   &quot;userEmail&quot;: &quot;abc@xyz.com&quot;,&#xA;   &quot;profilePic&quot;: &quot;http:///www.test.com/test.jpg&quot;,&#xA;   &quot;ethnicOrigin&quot;: &quot;&quot;,&#xA;   &quot;occupation&quot;: &quot;&quot;,&#xA;   &quot;companyName&quot;: &quot;&quot;,&#xA;   &quot;languages&quot;: &quot;English, Urdu&quot;,&#xA;   &quot;DOB&quot;: &quot;1984-10-23&quot;,&#xA;   &quot;height&quot;: &quot;165 cms&quot;,&#xA;   &quot;weight&quot;: &quot;65 kg&quot;,&#xA;   &quot;contactTime&quot;: &quot;&quot;,&#xA;   &quot;maritalStatus&quot;: &quot;&quot;,&#xA;   &quot;homeAddress&quot;: &quot;&quot;,&#xA;   &quot;physicalChallenged&quot;: &quot;Yes&quot;,&#xA;   &quot;challengesDetail&quot;: &quot;&quot;,&#xA;    &quot;foodAllergy&quot;: &quot;No&quot;,&#xA;   &quot;drugAllergy&quot;: &quot;Yes&quot;,&#xA;   &quot;drugAllergyDetail&quot;: &quot;&quot;,&#xA;   &quot;wakeupTime&quot;: &quot;&quot;,&#xA;   &quot;breakfastTime&quot;: &quot;&quot;,&#xA;   &quot;dinnerTime&quot;: &quot;&quot;,&#xA;   &quot;bedTime&quot;: &quot;&quot;,&#xA;   &quot;extraField1&quot;: &quot;&quot;,&#xA;   &quot;extraField2&quot;: &quot;&quot;,&#xA;   &quot;extraField3&quot;: &quot;&quot;,&#xA;  }&#xA;}" doc:name="Set Payload"/>
+    </flow>
+    <flow name="post:/auth/OTPVerfication:auth-config">
+        <set-payload value="{&#xA;  &quot;status&quot;: &quot;true&quot;,&#xA;  &quot;message&quot; : &quot;otp verified&quot;,&#xA;  &quot;statusCode&quot;: &quot;200&quot; &#xA;}" doc:name="Set Payload"/>
+    </flow>
+    <flow name="post:/auth/SendOTP:auth-config">
+        <set-payload value="{&#xA;  &quot;status&quot; : &quot;true&quot;,&#xA;  &quot;message&quot; : &quot;Otp send to your registered mobile no&quot;,&#xA;  &quot;statusCode&quot;: &quot;200&quot; &#xA;}" doc:name="Set Payload"/>
+    </flow>
+    <flow name="post:/auth/changePassword:auth-config">
+        <set-payload value="{&#xA;&quot;status&quot;: &quot;true&quot;,&#xA;&quot;message&quot;: &quot;password changed successfully&quot;,&#xA;&quot;statusCode&quot;: &quot;200&quot; &#xA;}" doc:name="Set Payload"/>
+    </flow>
+    <flow name="post:/auth/login:auth-config">
+        <set-payload value="{&#xA;  &quot;status&quot;: true,&#xA;  &quot;patientId&quot;: &quot;1&quot;, &quot;name&quot;: &quot;Ashish&quot;,&#xA;  &quot;userEmail&quot;: &quot;abc@xyz.com&quot;,&#xA;  &quot;accessToken&quot;: &quot;289dhd8h4kjnfjk89248h4f894398g989fafa7f9a7fa793g298&quot;,&#xA;  &quot;message&quot;: &quot;login successfull&quot;,&#xA;  &quot;statusCode&quot;: &quot;200&quot;&#xA;}" doc:name="Set Payload"/>
+    </flow>
+    <flow name="post:/auth/resetPassword:auth-config">
+        <set-payload value="{&#xA;  &quot;status&quot;: &quot;true&quot;,&#xA;  &quot;message&quot; : &quot;Password reset successful&quot;,&#xA;  &quot;statusCode&quot;: &quot;200&quot;&#xA;}" doc:name="Set Payload"/>
+    </flow>
+    <flow name="post:/auth/takeAgreement:auth-config">
+        <set-payload value="{&#xA;  &quot;status&quot;: &quot;true&quot;,&#xA;  &quot;message&quot;: &quot;save successfully&quot;,&#xA;  &quot;statusCode&quot;: &quot;200&quot;&#xA;}" doc:name="Set Payload"/>
+    </flow>
+    <apikit:mapping-exception-strategy name="auth-apiKitGlobalExceptionMapping">
+        <apikit:mapping statusCode="404">
+            <apikit:exception value="org.mule.module.apikit.exception.NotFoundException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Resource not found&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="405">
+            <apikit:exception value="org.mule.module.apikit.exception.MethodNotAllowedException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Method not allowed&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="415">
+            <apikit:exception value="org.mule.module.apikit.exception.UnsupportedMediaTypeException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Unsupported media type&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="406">
+            <apikit:exception value="org.mule.module.apikit.exception.NotAcceptableException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Not acceptable&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="400">
+            <apikit:exception value="org.mule.module.apikit.exception.BadRequestException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Bad request&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+    </apikit:mapping-exception-strategy>
+</mule>
