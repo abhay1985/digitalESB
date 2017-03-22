@@ -1,5 +1,5 @@
 <projectDescription>
-  <name>digital-accapp-sample-api</name>
+  <name>digital-accapp-doctor-api</name>
   <comment>Mule applications that need to use shared resources from the Non JTA domain
 should be created and kept here.</comment>
   <projects/>

@@ -1,0 +1,421 @@
+#%RAML 1.0
+title: User API
+version: v1
+description: User Module
+#baseUri: http://acc.com/user-api/{version}
+baseUri: https://mocksvc.mulesoft.com/mocks/09e138f5-12b5-4f2f-9581-71384ef7f8b1/user-api/{version}
+mediaType: application/json
+/validateUser:
+  description: Validate the user credential
+  post:
+    body: 
+      application/json:
+        description: Provide the login information
+        example: |
+                {
+                    "patientId": 32323,
+                    "password": "Adsd#d",
+                    "deviceId": "3333343",
+                    "device": "Andriod"
+                }
+          
+    responses:
+      200:
+        body: 
+          application/json:
+            example: |
+               {
+                 "status": true,
+                 "patientId": 1,
+                 "name": "Ashish",
+                 "userEmail": "abc@xyz.com",
+                 "accessToken": "289dhd8h4kjnfjk89248h4f894398g989fafa7f9a7fa793g298",
+                 "message": "login successfull",
+                 "statusCode": 200
+                }
+      401:
+        body: 
+          application/json:
+            example: |
+               {
+                  "status": "false",
+                  "errorMessage": "Login Failed",
+                  "errorCode": "1001",
+                  "statusCode": "401"
+                }
+/getUserById/userId/{id}:
+  description: Get user detail by there ID
+  get:
+    responses: 
+      201:
+        body: 
+          application/json:
+            example: |
+              "test"
+      200:
+        body: 
+          application/json:
+            example: | 
+              {
+               "status": "true",
+                "user_id": 1,
+                 "user_group": 1,
+                 "details": {
+                    "name": "Amit Singh",
+                    "email": "",
+                   },
+                 "status": "Active",
+                 "last_login": "YYYY-MM-DD H:i:s", "output_param1": "",
+                 "output_param2": "",
+                 "output_param3": "",
+                 "output_param4": ""
+               "message" : "Success",
+               "statusCode": "200"
+                }
+      401:
+        body: 
+          application/json:
+            example: |
+              {
+                 "status": "false",
+                 "errorMessage": "User ID doesn't exist",
+                 "errorCode": "1002",
+                 "statusCode": "401"
+                }
+/forgotPassword/userId/{id}:
+  description: Retrieve the password for the user
+  get:
+    responses:
+      200:
+        body: 
+          application/json:
+            example: |
+              {
+                   "status": "true",
+                   "message" : "Success",
+                   "statusCode": "200"
+                }
+      401:
+        body: 
+          application/json:
+            example: |
+              {
+                 "status": "false",
+                 "errorMessage": "User ID doesn't exist",
+                 "errorCode": "1002",
+                 "statusCode": "401"
+                }
+/resetUserPassword/userId/{id}:
+  description: Re-set the password of the user
+  get:
+    responses:
+      200:
+        body: 
+          application/json:
+            example: |
+              {
+                   "status": "true",
+                   "message" : "Password Reset Succesful",
+                   "statusCode": "200"
+                }
+      401:
+        body: 
+          application/json:
+            example: |
+              {
+                 "status": "false",
+                 "errorMessage": "User ID doesn't exist",
+                 "errorCode": "1002",
+                 "statusCode": "401"
+                }
+/getUserByKey/key/{id}:
+  description: Get the user details by the respected user key
+  get:
+    responses:
+      200:
+        body: 
+          application/json:
+            example: |
+              {
+                   "status": "true",
+                   "agreementStatus": "Accepted",
+                   "message" : "Terms & conditions already accepted",
+                   "statusCode": "200"
+                }
+      401:
+        body: 
+          application/json:
+            example: |
+              {
+                 "status": "false",
+                 "errorMessage": "Unable to fine the user by the respected key.",
+                 "errorCode": "1002",
+                 "statusCode": "401"
+                }
+
+/SendOTP:
+    description: Send the OTP to the target system
+    post:
+      body: 
+        application/json:
+          description: Provide the login information
+          example: |
+            {
+              "patientId": "32323",
+              "otpType": "1" 
+            }
+      responses:
+        200:
+          body: 
+            application/json:
+              example: |
+                {
+                  "status" : "true",
+                  "message" : "Otp send to your registered mobile no",
+                  "statusCode": "200" 
+                }
+        401:
+           body: 
+            application/json:
+              example: |
+                {
+                   "status": "false",
+                   "errorMessage": "OTP not matched",
+                   "errorCode": "1001",
+                   "statusCode": "401"
+                }
+/OTPVerfication:
+    description: Validate the OTP
+    post:
+      body: 
+        application/json:
+          description: Provide the login information
+          example: |
+            { 
+              "patientId": "32323",
+              "OTP": "434343",
+              "otpType": "1"
+            }
+      responses:
+        200:
+          body: 
+            application/json:
+              example: |
+                {
+                  "status": "true",
+                  "message" : "otp verified",
+                  "statusCode": "200" 
+                }
+        401:
+           body: 
+            application/json:
+              example: |
+               {
+                 "status": "false",
+                 "errorMessage": "OTP not matched",
+                 "errorCode": "1001",
+                 "statusCode": "401" 
+               }
+/resetPasswordOTP:
+    description: Reset Password after correct OTP
+    post:
+      body: 
+        application/json:
+          description: Provide the login information
+          example: |
+            { 
+              "patientId": "32323",
+              "newPass": "A33#ds" 
+            }
+      responses:
+        200:
+          body: 
+            application/json:
+              example: |
+                {
+                  "status": "true",
+                  "message" : "Password reset successful",
+                  "statusCode": "200"
+                }
+        403:
+           body: 
+            application/json:
+              example: |
+                {
+                  "status": "false",
+                 "errorMessage": "Unable to reset the password",
+                 "errorCode": "1002",
+                 "statusCode": "403"
+                }
+                
+/chkAgreementStatus/patientId/{id}:
+    description: Check Agreement Status
+    get:
+      responses:
+        200:
+          body: 
+            application/json:
+              example: |
+                {
+                   "status": "true",
+                   "agreementStatus": "Accepted",
+                   "message" : "Terms & conditions already accepted",
+                   "statusCode": "200"
+                }
+        401:
+           body: 
+            application/json:
+              example: |
+                {
+                 "status": "false",
+                 "errorMessage": "Not Accepted",
+                 "errorCode": "1002",
+                 "statusCode": "401"
+                }
+/takeAgreement:
+    description: Agreement Taking API
+    post:
+      body: 
+        application/json:
+          description: Provide the login information
+          example: |
+            { 
+             "patientId": 1001,
+             "isAgree": "Yes" 
+            }
+      responses:
+        200:
+          body: 
+            application/json:
+              example: |
+                {
+                  "status": "true",
+                  "message": "save successfully",
+                  "statusCode": "200"
+                }
+        403:
+           body: 
+            application/json:
+              example: |
+                {
+                 "status": "false",
+                 "errorMessage": "Unable to save the agreement",
+                 "errorCode": "1002",
+                 "statusCode": "403"
+                }
+/userDetail/patientId/{id}:
+    description: User Detail API
+    get:
+      responses:
+        200:
+          body: 
+            application/json:
+              example: |
+                {
+                "status": "true",
+                "message": "User info fetched",
+                "statusCode": "200",
+                "data": {
+                   "patientId": "1",
+                   "name": "Ashish",
+                   "userEmail": "abc@xyz.com",
+                   "profilePic": "http:///www.test.com/test.jpg",
+                   "ethnicOrigin": "",
+                   "occupation": "",
+                   "companyName": "",
+                   "languages": "English, Urdu",
+                   "DOB": "1984-10-23",
+                   "height": "165 cms",
+                   "weight": "65 kg",
+                   "contactTime": "",
+                   "maritalStatus": "",
+                   "homeAddress": "",
+                   "physicalChallenged": "Yes",
+                   "challengesDetail": "",
+                    "foodAllergy": "No",
+                   "drugAllergy": "Yes",
+                   "drugAllergyDetail": "",
+                   "wakeupTime": "",
+                   "breakfastTime": "",
+                   "dinnerTime": "",
+                   "bedTime": "",
+                   "extraField1": "",
+                   "extraField2": "",
+                   "extraField3": "",
+                  }
+                }
+        401:
+           body: 
+            application/json:
+              example: |
+                {
+                 "status": "false",
+                 "errorMessage": "Unable to get the details",
+                 "errorCode": "1002",
+                 "statusCode": "401"
+                 }
+/changePassword:
+    description: Change Password API
+    post:
+      body: 
+        application/json:
+          description: Provide the login information
+          example: | 
+            { 
+             "patientId": "32323",
+              "oldPass": "B33#ds",
+              "newPass": "A33#ds"
+            }
+      responses:
+        200:
+          body: 
+            application/json:
+              example: |
+                {
+                "status": "true",
+                "message": "password changed successfully",
+                "statusCode": "200" 
+                }
+        400:
+           body: 
+            application/json:
+              example: |
+                {
+                  "status": "false",
+                  "errorMessage": "Unable to change the password",
+                  "errorCode": "105",
+                  "statusCode": "400"
+                 } 
+/submitFormForGuest:
+    description: Submit the guest from to the target system
+    post:
+      body: 
+        application/json:
+          description: Provide the login information
+          example: |
+            {
+             "firstName": "neeraj",
+             "lastName": "kumar",
+             "mobile": "7499983533",
+             "email": "neerajarya8243@gmail.com"
+            }
+      responses:
+        200:
+          body: 
+            application/json:
+              example: |
+                {
+                  "status": true,
+                  "message": "save successfully",
+                  "statusCode": 200 
+                }
+        401:
+           body: 
+            application/json:
+              example: |
+                {
+                   "status": "false",
+                   "errorMessage": "OTP not matched",
+                   "errorCode": "1001",
+                   "statusCode": "401"
+                }

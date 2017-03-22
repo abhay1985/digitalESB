@@ -18,6 +18,7 @@ should be created and kept here.]]>
 	<modules>
 		<module>digital-accapp-doctor-api</module>	
         <module>digital-accapp-patient-api</module>	
-        <module>digital-accapp-user-api</module>			
+        <module>digital-accapp-user-api</module>	
+		<module>digital-accapp-generic-api</module>
 	</modules>
 </project>

@@ -2,10 +2,10 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.accapp.integration</groupId>
-	<artifactId>integration-parent</artifactId>
+	<artifactId>acc-integration-parent</artifactId>
 	<version>1.0-DEVELOPMENT</version>
 	<packaging>pom</packaging>
-	<name>Integration Parent POM</name>
+	<name>ACC Integration Parent POM</name>
 	<description>Parent POM project for all Acc App integration workstream projects.</description>
 
 	<properties>
@@ -20,8 +20,8 @@
 		<!-- END - Mule configuration properties -->
 
 		<!-- START - Java compiler configurations -->
-		<java.source.version>1.7</java.source.version>
-		<java.target.version>1.7</java.target.version>
+		<java.source.version>1.8</java.source.version>
+		<java.target.version>1.8</java.target.version>
 		<java.compiler.fork>true</java.compiler.fork>
 		<java.compiler.initial.mem>256m</java.compiler.initial.mem>
 		<java.compiler.max.mem>512m</java.compiler.max.mem>
@@ -39,7 +39,7 @@
 		<mule.munit.support.version>3.7.1</mule.munit.support.version>
 
 		<juniversalchardet.version>1.0.3</juniversalchardet.version>
-		<raml.version>0.8.12</raml.version>
+		<raml.version>1.0</raml.version>
 		<snakeyaml.version>1.15</snakeyaml.version>
 		<!-- END Mule module and dependencies versions -->
 
@@ -48,14 +48,14 @@
 		<javax.el.version>2.2.4</javax.el.version>
 		<!-- END Hibernate validator and dependencies versions -->
 
-		<commons.io.version>2.4</commons.io.version>
-		<log4j.version>2.1</log4j.version>
+		<commons.io.version>2.5</commons.io.version>
+		<log4j.version>2.5</log4j.version>
 		<!-- START plugin versions -->
 		<maven.compiler.plugin.version>3.2</maven.compiler.plugin.version>
 		<maven.assembly.plugin.version>2.5.5</maven.assembly.plugin.version>
-		<mule.domain.maven.plugin.version>1.1</mule.domain.maven.plugin.version>
-		<maven.build.helper.maven.plugin.version>1.9.1</maven.build.helper.maven.plugin.version>
-		<maven.dependency.plugin.version>2.10</maven.dependency.plugin.version>
+		<mule.domain.maven.plugin.version>1.2</mule.domain.maven.plugin.version>
+		<maven.build.helper.maven.plugin.version>3.0.0</maven.build.helper.maven.plugin.version>
+		<maven.dependency.plugin.version>3.0.0</maven.dependency.plugin.version>
 		<maven.antrun.plugin.version>1.8</maven.antrun.plugin.version>
 		<!-- END plugin versions -->
 
@@ -177,18 +177,7 @@
 				<version>${mule.version}</version>
 				<scope>provided</scope>
 			</dependency>
-			<dependency>
-				<groupId>com.mulesoft.muleesb.modules</groupId>
-				<artifactId>mule-module-data-mapper</artifactId>
-				<version>${mule.version}</version>
-				<scope>test</scope>
-				<exclusions>
-					<exclusion>
-						<groupId>com.mulesoft.muleesb.modules</groupId>
-						<artifactId>mule-module-boot-ee</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
+			
 			<dependency>
 				<groupId>com.mulesoft.muleesb.modules</groupId>
 				<artifactId>mule-module-tracking-ee</artifactId>
@@ -408,11 +397,6 @@
 				<artifactId>mule-module-security-filters</artifactId>
 				<version>${mule.anypoint.security.version}</version>
 			</dependency>
-			<dependency>
-				<groupId>com.mulesoft.security</groupId>
-				<artifactId>mule-module-security-crc32</artifactId>
-				<version>${mule.anypoint.security.version}</version>
-			</dependency>
 			<!-- Anypoint Security jars -->
 			<!-- END - Mule Modules -->
 
@@ -476,11 +460,7 @@
 
 
 			<!-- START Oracle JDBC Thin driver -->
-			<dependency>
-				<groupId>com.oracle</groupId>
-				<artifactId>ojdbc7</artifactId>
-				<version>12.1.0.2</version>
-			</dependency>
+			
 			<!-- END Oracle JDBC Thin driver -->
 
 			<!-- START Commons-lang jar for BDM001 -->
@@ -508,31 +488,8 @@
 				<artifactId>mule-transport-wmq-ee</artifactId>
 				<version>${mule.version}</version>
 			</dependency>
-			<dependency>
-				<groupId>com.ibm.mq</groupId>
-				<artifactId>com.ibm.mqjms</artifactId>
-				<version>${ibm.mq.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.ibm.mq</groupId>
-				<artifactId>com.ibm.mq.jmqi</artifactId>
-				<version>${ibm.mq.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.ibm.mq</groupId>
-				<artifactId>com.ibm.mq.allclient</artifactId>
-				<version>${ibm.mq.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.ibm.mq</groupId>
-				<artifactId>com.ibm.mq</artifactId>
-				<version>${ibm.mq.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>javax.jms</groupId>
-				<artifactId>javax.jms-api</artifactId>
-				<version>${javax.ibm.version}</version>
-			</dependency>
+			
+		
 			<dependency>
 				<groupId>org.hibernate</groupId>
 				<artifactId>hibernate-validator</artifactId>
@@ -811,9 +768,7 @@
 									<resource>
 										<directory>src/main/app/</directory>
 									</resource>
-									<resource>
-										<directory>mappings/</directory>
-									</resource>
+									
 									<resource>
 										<directory>src/main/api/</directory>
 									</resource>
@@ -1024,7 +979,6 @@
 			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
-
 	<!-- Integration Project core build profiles -->
 	<profiles>
 		<!-- Default integration build profile. This profile builds everything....all 
@@ -1036,10 +990,6 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<modules>
-				<!-- <module>../mule-modules/facebook-connector-develop</module> -->
-				<!-- <module>custom-components</module> -->
-				<!-- <module>common-flow-fragments</module> -->
-				<!-- <module>rl-jta-aware-domain-parent</module> -->
 				<module>accapp-domain-parent</module>
 			</modules>
 		</profile>

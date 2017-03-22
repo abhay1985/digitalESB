@@ -1,6 +1,6 @@
 <projectDescription>
   <name>accapp-domain</name>
-  <comment/>
+  <comment>Parent POM project for Non JTA Mule domain.</comment>
   <projects/>
   <buildSpec>
     <buildCommand>
