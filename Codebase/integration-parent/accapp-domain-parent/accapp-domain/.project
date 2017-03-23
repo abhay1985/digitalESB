@@ -1,5 +1,5 @@
 <projectDescription>
-  <name>acc-simple-domain</name>
+  <name>accapp-domain</name>
   <comment>Mule domain projects that has shared resources and configuration 
 which is nNon JTA aware. All mule apps and flows that need Non JTA based resources 
 should be kept in this domain.</comment>
