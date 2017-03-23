@@ -1,0 +1,43 @@
+#%RAML 1.0
+title: Some General API like Contact US, API Version etc
+version: v1
+description: Patient Module
+baseUri: http://acc.com/generic-api/{version}
+#baseUri: https://mocksvc.mulesoft.com/mocks/a500e47f-a38e-4ac9-a612-46bad72b1853/generic-api/{version}
+mediaType: application/json
+/getServerAPIVersion:
+  description: Get the current server API version
+  get:
+    queryParameters: 
+      device:
+        description: "Give the device name"
+        required: true
+        minLength: 3
+        type: string
+        example: "Android"
+      version:
+        description: "Give the version number"
+        required: true
+        type: number
+        example: 1.03
+    responses:
+      200:
+        body: 
+          application/json:
+            example: |
+               {
+                 "status" : true,
+                 "updateRequired": "Yes"
+                 "message" : "update needed",
+                 "statusCode": 200                   
+                }
+      401:
+        body: 
+          application/json:
+            example: |
+               {
+                  "status": false,
+                   "errorMessage": "Unable to get the API Version Number",
+                   "errorCode": "105",
+                   "statusCode": 401
+                }
