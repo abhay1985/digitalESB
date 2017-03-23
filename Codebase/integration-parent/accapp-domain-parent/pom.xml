@@ -2,14 +2,14 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>com.accapp.integration</groupId>
-		<artifactId>acc-integration-parent</artifactId>
+		<groupId>com.acc.integration</groupId>
+		<artifactId>integration-parent</artifactId>
 		<version>1.0-DEVELOPMENT</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>accapp-domain-parent</artifactId>
 	<packaging>pom</packaging>
-	<name>Gatewat Mule Domain Parent POM</name>
+	<name>Simple Mule Domain Parent POM</name>
 	<description>Parent POM project for Non JTA Mule domain.</description>
 
 	<modules>

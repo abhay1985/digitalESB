@@ -1,34 +1,67 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>com.accapp.integration</groupId>
-		<artifactId>accapp-domain-parent</artifactId>
+		<groupId>com.acc.integration</groupId>
+		<artifactId>acc-simple-domain-parent</artifactId>
 		<version>1.0-DEVELOPMENT</version>
 		<relativePath>..</relativePath>
 	</parent>
-    <groupId>com.accapp.integration</groupId>
-    <artifactId>accapp-domain</artifactId>
-    <packaging>mule-domain</packaging>
-    <version>1.0-DEVELOPMENT</version>
-    <name>Domain gateway-domain Project</name>
-	
+	<artifactId>accapp-domain</artifactId>
+	<packaging>mule-domain</packaging>
+	<name>Simple Mule Domain</name>
+	<description>
+		<![CDATA[Mule domain projects that has shared resources and configuration 
+which is nNon JTA aware. All mule apps and flows that need Non JTA based resources 
+should be kept in this domain.]]>
+	</description>
 	<dependencies>
 		<dependency>
-            <groupId>org.mule.modules</groupId>
-            <artifactId>mule-module-http</artifactId>
-            <version>${mule.version}</version>
-            <scope>provided</scope>
-        </dependency>
+			<groupId>com.oracle</groupId>
+			<artifactId>ojdbc7</artifactId>
+		</dependency>
+		<!-- IBM Mq -->
 		<dependency>
-            <groupId>org.mule.modules</groupId>
-            <artifactId>mule-module-spring-config</artifactId>
-            <version>${mule.version}</version>
-            <scope>provided</scope>
-        </dependency>
+			<groupId>com.mulesoft.muleesb.transports</groupId>
+			<artifactId>mule-transport-wmq-ee</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.ibm.mq</groupId>
+			<artifactId>com.ibm.mqjms</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.ibm.mq</groupId>
+			<artifactId>com.ibm.mq.jmqi</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.ibm.mq</groupId>
+			<artifactId>com.ibm.mq.allclient</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.ibm.mq</groupId>
+			<artifactId>com.ibm.mq</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.jms</groupId>
+			<artifactId>javax.jms-api</artifactId>
+		</dependency>
+		<!-- IBM Mq -->
+		<dependency>
+			<groupId>net.sf.supercsv</groupId>
+			<artifactId>super-csv</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.mulesoft.security</groupId>
+			<artifactId>mule-module-security-property-placeholder</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.modules</groupId>
+			<artifactId>mule-module-objectstore</artifactId>
+			<version>${mule.module.objectstore}</version>
+		</dependency>
 	</dependencies>
-
-    <build>
+	<build>
 		<finalName>${project.artifactId}</finalName>
 		<plugins>
 			<plugin>

@@ -1,16 +1,18 @@
 <projectDescription>
-  <name>accapp-domain</name>
-  <comment>Parent POM project for Non JTA Mule domain.</comment>
+  <name>acc-simple-domain</name>
+  <comment>Mule domain projects that has shared resources and configuration 
+which is nNon JTA aware. All mule apps and flows that need Non JTA based resources 
+should be kept in this domain.</comment>
   <projects/>
   <buildSpec>
     <buildCommand>
       <name>org.eclipse.jdt.core.javabuilder</name>
     </buildCommand>
     <buildCommand>
-      <name>org.mule.tooling.core.muleBuilder</name>
+      <name>org.mule.tooling.core.muleDomainBuilder</name>
     </buildCommand>
     <buildCommand>
-      <name>org.mule.tooling.core.muleDomainBuilder</name>
+      <name>org.mule.tooling.core.muleBuilder</name>
     </buildCommand>
     <buildCommand>
       <name>org.mule.tooling.maven.mavenBuilder</name>
@@ -19,7 +21,7 @@
   <natures>
     <nature>org.mule.tooling.maven.mavenNature</nature>
     <nature>org.mule.tooling.core.muleDomainNature</nature>
-    <nature>org.eclipse.jdt.core.javanature</nature>
     <nature>org.mule.tooling.core.muleNature</nature>
+    <nature>org.eclipse.jdt.core.javanature</nature>
   </natures>
 </projectDescription>

@@ -3,14 +3,14 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>com.accapp.integration</groupId>
+		<groupId>com.acc.integration</groupId>
 		<artifactId>accapp-domain-apps</artifactId>
 		<version>1.0-DEVELOPMENT</version>
 		<relativePath>..</relativePath>
 	</parent>
-	<groupId>com.accapp</groupId>
+	<groupId>com.acc.integration</groupId>
 	<artifactId>digital-accapp-user-api</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0-SNAPSHOT</version>
     <packaging>mule</packaging>
 	<name>Mule digitalaccapi User Application</name>
 
@@ -18,8 +18,12 @@
 	<dependencies>
 		<!-- Xml configuration -->
 		<dependency>
-        	<groupId>com.mulesoft.muleesb</groupId>
+			<groupId>com.mulesoft.muleesb</groupId>
 			<artifactId>mule-core-ee</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.mulesoft.muleesb.modules</groupId>
+			<artifactId>mule-module-boot-ee</artifactId>
 		</dependency>
 		<!-- Xml configuration -->
 		<dependency>
@@ -36,18 +40,23 @@
 			<artifactId>mule-transport-http</artifactId>
 		</dependency>
 		<dependency>
-        	<groupId>com.mulesoft.muleesb.transports</groupId>
+			<groupId>com.mulesoft.muleesb.transports</groupId>
 			<artifactId>mule-transport-jdbc-ee</artifactId>
 		</dependency>
 		<dependency>
-        	<groupId>com.mulesoft.muleesb.transports</groupId>
+			<groupId>com.mulesoft.muleesb.transports</groupId>
 			<artifactId>mule-transport-jms-ee</artifactId>
 		</dependency>
+		<!-- Mule Modules -->
 		<dependency>
 			<groupId>org.mule.transports</groupId>
 			<artifactId>mule-transport-vm</artifactId>
 		</dependency>
 		<!-- Mule Modules -->
+		<dependency>
+			<groupId>org.mule.modules</groupId>
+			<artifactId>mule-module-client</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.mule.modules</groupId>
 			<artifactId>mule-module-scripting</artifactId>
@@ -56,54 +65,93 @@
 			<groupId>org.mule.modules</groupId>
 			<artifactId>mule-module-xml</artifactId>
 		</dependency>
-		<!-- for testing -->
+		<dependency>
+			<groupId>org.mule.modules</groupId>
+			<artifactId>mule-module-launcher</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.modules</groupId>
+			<artifactId>mule-module-devkit-support</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.mule.tests</groupId>
 			<artifactId>mule-tests-functional</artifactId>
 		</dependency>
-	
-    <dependency>
-            <groupId>org.mule.modules</groupId>
-            <artifactId>mule-module-http</artifactId>
-            <version>${mule.version}</version>
-            <scope>provided</scope>
-        </dependency>
-    <dependency>
-            <groupId>org.mule.modules</groupId>
-            <artifactId>mule-module-spring-config</artifactId>
-            <version>${mule.version}</version>
-            <scope>provided</scope>
-        </dependency>
-    <dependency>
-            <groupId>org.mule.modules</groupId>
-            <artifactId>mule-module-objectstore</artifactId>
-            <version>2.3.0-RELEASE</version>
-    </dependency>
-    <dependency>
-            <groupId>com.accapp.integration</groupId>
-            <artifactId>accapp-domain</artifactId>
-            <version>1.0-DEVELOPMENT</version>
-            <scope>test</scope>
-            <type>zip</type>
-        </dependency>
+		<dependency>
+			<groupId>com.cloveretl</groupId>
+			<artifactId>cloveretl-engine</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.modules</groupId>
+			<artifactId>mule-module-db</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.modules</groupId>
+			<artifactId>mule-module-spring-config</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.modules</groupId>
+			<artifactId>mule-module-objectstore</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+		</dependency>
+		 <dependency>
+			<groupId>org.mule.transports</groupId>
+			<artifactId>mule-transport-quartz</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.mulesoft.muleesb.modules</groupId>
+			<artifactId>mule-module-tracking-ee</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.transports</groupId>
+			<artifactId>mule-transport-email</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.mulesoft.muleesb.modules</groupId>
+			<artifactId>mule-module-batch-ee</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>xerces</groupId>
+			<artifactId>xercesImpl</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.modules</groupId>
+			<artifactId>mule-module-schedulers</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+		</dependency>
     </dependencies>
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.mule.tools.maven</groupId>
 				<artifactId>mule-app-maven-plugin</artifactId>
-				<version>${mule.tools.version}</version>
-				<extensions>true</extensions>
 				<configuration>
-                    <copyToAppsDirectory>true</copyToAppsDirectory>
-				<inclusions>
-                        
-                    <inclusion>
-                            <groupId>org.mule.modules</groupId>
-                            <artifactId>mule-module-objectstore</artifactId>
-                        </inclusion>
-                    </inclusions>
-                </configuration>
+					<copyToAppsDirectory>false</copyToAppsDirectory>
+					<inclusions>
+						<inclusion>
+							<groupId>org.mule.modules</groupId>
+							<artifactId>mule-module-objectstore</artifactId>
+						</inclusion>
+						<inclusion>
+							<groupId>com.mulesoft.security</groupId>
+							<artifactId>mule-module-security-crc32</artifactId>
+						</inclusion>
+					</inclusions>
+				</configuration>
 			</plugin>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
@@ -122,6 +170,4 @@
 			</plugin>
 		</plugins>
 	</build>
-	
-	
 </project>

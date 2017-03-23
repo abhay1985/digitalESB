@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+	<Properties>
+		<Property name="interface_name">rl-simple-domain</Property>
+		<Property name="file_size">100 MB</Property>
+		<Property name="file_count_to_keep">10</Property>
+	</Properties>
+	<Appenders>
+
+		<RollingFile name="${interface_name}" fileName="${env:MULE_HOME}/logs/${interface_name}.log" 
+				filePattern="${env:MULE_HOME}/logs/${interface_name}.log.%i">
+			<PatternLayout>
+				<pattern>%-5p %d [%t] %c: %m%n</pattern>
+			</PatternLayout>
+			<Policies>
+				<SizeBasedTriggeringPolicy size="${file_size}" />
+			</Policies>
+			<DefaultRolloverStrategy max="${file_count_to_keep}" />
+		</RollingFile>
+	</Appenders>
+	
+	<Loggers>
+
+		<!-- CXF is used heavily by Mule for web services -->
+		<AsyncLogger name="org.apache.cxf" level="WARN" additivity="true" includeLocation="true"/>
+
+		<AsyncLogger name="org.quartz" level="INFO" additivity="true" />
+
+		<!-- Apache Commons tend to make a lot of noise which can clutter the log -->
+		<AsyncLogger name="org.apache" level="WARN" additivity="true" includeLocation="true"/>
+
+		<!-- Reduce startup noise -->
+		<AsyncLogger name="org.springframework.beans.factory" level="WARN" additivity="true" />
+
+		<!-- Mule classes -->
+		<AsyncLogger name="org.mule" level="INFO" additivity="true" includeLocation="true"/>
+		<AsyncLogger name="com.mulesoft" level="INFO" additivity="true" includeLocation="true"/>
+
+		<!-- App classes -->
+		<AsyncLogger name="${interface_name}" 
+				level="INFO" additivity="true" includeLocation="true" />
+		
+		<AsyncLogger name="Common.Flow.Service" level="INFO" additivity="true" includeLocation="true" />
+		
+		<AsyncLogger name="com.ralphlauren.integration" level="INFO" additivity="true" includeLocation="true" />
+
+		<!-- Reduce DM verbosity -->
+		<AsyncLogger name="org.jetel" level="WARN" additivity="true" includeLocation="true" />
+		<AsyncLogger name="Tracking" level="WARN" additivity="true" includeLocation="true" />
+
+		<AsyncRoot level="INFO" additivity="true" includeLocation="true">
+			<AppenderRef ref="${interface_name}" />
+		</AsyncRoot>
+	</Loggers>
+</Configuration>
