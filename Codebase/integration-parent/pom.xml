@@ -20,8 +20,8 @@
 		<!-- END - Mule configuration properties -->
 
 		<!-- START - Java compiler configurations -->
-		<java.source.version>1.7</java.source.version>
-		<java.target.version>1.7</java.target.version>
+		<java.source.version>1.8</java.source.version>
+		<java.target.version>1.8</java.target.version>
 		<java.compiler.fork>true</java.compiler.fork>
 		<java.compiler.initial.mem>256m</java.compiler.initial.mem>
 		<java.compiler.max.mem>512m</java.compiler.max.mem>
