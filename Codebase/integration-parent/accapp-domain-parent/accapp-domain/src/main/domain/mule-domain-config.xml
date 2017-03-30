@@ -34,5 +34,10 @@ http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/cor
 		doc:name="HTTP Listener Configuration" connectionIdleTimeout="${http.listener.connection.idle.timeout}"
 		doc:description="Common HTTP listener configuration for all mule modules that are to be depoyed on the Gateway Domain">
 	</http:listener-config>
+	
+	
+	<http:request-config name="SystemAPIHttp_Request_Configuration" host="${systemApi.http.listener.host}" port="${systemApi.http.listener.port}" basePath="${systemApi.http.listener.base.uri}" doc:name="HTTP Request Configuration"/>
+	
+
 
 </domain:mule-domain>

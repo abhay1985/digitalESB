@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration>
 	<Properties>
-		<Property name="interface_name">rl-simple-domain</Property>
+		<Property name="interface_name">acc-app-domain</Property>
 		<Property name="file_size">100 MB</Property>
 		<Property name="file_count_to_keep">10</Property>
 	</Properties>

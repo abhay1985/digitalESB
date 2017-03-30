@@ -7,41 +7,55 @@ http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/a
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
     
     <context:property-placeholder
-		location="file:///${accapp.integration.configuration.home}/acc_domain/apps-conf/digital-accapp-generic.properties" />
+		location="file:///${accapp.integration.configuration.home}/acc_domain/apps-conf/digital-accapp-notification-plan.properties" />
 		
-    <apikit:config name="generic-config" raml="generic.raml" consoleEnabled="true" doc:name="Router" keepRamlBaseUri="false"/>
-    <flow name="generic-main">
-        <http:listener config-ref="DomainHttpListenerConfiguration" path="/generic-api/${generic.api.version}/*" doc:name="HTTP"/>
-        <apikit:router config-ref="generic-config" doc:name="APIkit Router"/>
-
-        <exception-strategy ref="generic-apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy"/>
+    <apikit:config name="notification-plan-config" raml="notification-plan.raml" consoleEnabled="false" doc:name="Router"/>
+    <flow name="notification-plan-main">
+        <http:listener config-ref="DomainHttpListenerConfiguration" path="/notification-api/${notification.api.version}/*" doc:name="HTTP"/>
+        <apikit:router config-ref="notification-plan-config" doc:name="APIkit Router"/>
+        <exception-strategy ref="notification-plan-apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy"/>
     </flow>
-    <flow name="generic-console">
-        <http:listener config-ref="DomainHttpListenerConfiguration" path="/generic-console/${generic.api.version}/*" doc:name="HTTP"/>
-        <apikit:console config-ref="generic-config" doc:name="APIkit Console"/>
+    <flow name="notification-plan-console">
+        <http:listener config-ref="DomainHttpListenerConfiguration" path="/notification-console/${notification.api.version}/*" doc:name="HTTP"/>
+        <apikit:console config-ref="notification-plan-config" doc:name="APIkit Console"/>
     </flow>
-    <flow name="get:/getServerAPIVersion:generic-config">
-        <logger message="Server API input Version No: #[message.inboundProperties.'http.query.params'.version]" level="INFO" doc:name="Logger"/>
-        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${serverAPIVersion.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP">
+    <flow name="get:/getAllNotification:notification-plan-config">
+        <logger message="Get All notification input startDateTime: #[message.inboundProperties.'http.query.params'.startDateTime]" level="INFO" doc:name="Logger"/>
+        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${getAllNotification.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP">
             <http:request-builder>
                 <http:query-params expression="#[message.inboundProperties['http.query.params']]"/>
             </http:request-builder>
         </http:request>
-        <logger message="Server API version response: #[payload]" level="INFO" doc:name="Logger"/>
+        <logger message="Get All notification response: #[payload]" level="INFO" doc:name="Logger"/>
     </flow>
-    <flow name="post:/callSubmit:generic-config">
-       <logger message="Call submit request data: #[payload]" level="INFO" doc:name="Logger"/>
-        <object-to-string-transformer doc:name="Object to String"/>
-        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${callSubmit.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP"/>            
-        <logger level="INFO" doc:name="Logger" message="Call submit response data: #[payload]"/>
+    <flow name="get:/getAllPlan:notification-plan-config">
+        <logger message="The request came to get all plan." level="INFO" doc:name="Logger"/>
+        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${getPlans.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP">
+            <http:request-builder>
+                <http:query-params expression="#[message.inboundProperties['http.query.params']]"/>
+            </http:request-builder>
+        </http:request>
+        <logger message="The all plan list are:  #[payload]" level="INFO" doc:name="Logger"/>
     </flow>
-    <flow name="post:/submitFeedback:generic-config">
-       <logger message="Submit Feedback request data: #[payload]" level="INFO" doc:name="Logger"/>
-        <object-to-string-transformer doc:name="Object to String"/>
-        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${submitFeedback.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP"/>            
-        <logger level="INFO" doc:name="Logger" message="Submit Feedback reponse data: #[payload]"/>
+    <flow name="get:/getHomeBanners:notification-plan-config">
+        <logger message="Get homebanners." level="INFO" doc:name="Logger"/>
+        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${getHomeBanners.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP">
+            <http:request-builder>
+                <http:query-params expression="#[message.inboundProperties['http.query.params']]"/>
+            </http:request-builder>
+        </http:request>
+        <logger message="Get homebanners response: #[payload]" level="INFO" doc:name="Logger"/>
     </flow>
-    <apikit:mapping-exception-strategy name="generic-apiKitGlobalExceptionMapping">
+    <flow name="get:/getNotificationDetail:notification-plan-config">
+        <logger message="Get Notification detail input notificationId: #[message.inboundProperties.'http.query.params'.notificationId]" level="INFO" doc:name="Logger"/>
+        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${getNotificationDetail.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP">
+            <http:request-builder>
+                <http:query-params expression="#[message.inboundProperties['http.query.params']]"/>
+            </http:request-builder>
+        </http:request>
+        <logger message="Get Notification detail reponse: #[payload]" level="INFO" doc:name="Logger"/>
+    </flow>
+    <apikit:mapping-exception-strategy name="notification-plan-apiKitGlobalExceptionMapping">
         <apikit:mapping statusCode="404">
             <apikit:exception value="org.mule.module.apikit.exception.NotFoundException" />
             <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>

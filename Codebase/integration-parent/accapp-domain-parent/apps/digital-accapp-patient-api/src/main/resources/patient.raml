@@ -96,9 +96,16 @@ mediaType: application/json
                  "errorCode": "105",
                  "statusCode": 403
                 }
-/getAllDeviceDeatils/patient/{id}:
+/getAllDeviceDeatils:
   description: Get the all device details for the patient
   get:
+    queryParameters: 
+      patientId:
+        description: "Give the patient ID"
+        required: true
+        minLength: 3
+        type: string
+        example: "23455"
     responses:
       200:
         body: 
@@ -133,4 +140,958 @@ mediaType: application/json
                    "errorCode": "105",
                    "statusCode": 403
                 }
-  
+/submitBPRecord:
+  description: Submit the BP record of the patient
+  post:
+    body: 
+      application/json:
+        description: Provide the BP details in the respect of patient
+        example: |
+          {
+           "patientId": 32323,
+           "systolic": 135,
+           "diastolic": 90,
+           "pulse": 72,
+           "dateTime": "2017-02-14 22:40:00",
+           "comment: "Your comment"
+          }
+          
+    responses:
+      200:
+        body: 
+          application/json:
+            example: |
+               {
+                  "status": true,
+                  "message": "record submitted successfully",
+                  "webRecordId": 323,
+                 "statusCode": 200
+                }
+      403:
+        body: 
+          application/json:
+            example: |
+               {
+                 "status": false,
+                 "errorMessage": "Unable to save the data",
+                 "errorCode": "105",
+                 "statusCode": 403
+                }
+/submitBPComments:
+  description: Submit the BP comments of the patient
+  post:
+    body: 
+      application/json:
+        description: Provide the BP details in the respect of patient
+        example: |
+          {
+           "patientId": 32323,
+           "webRecordId": 232,
+           "comment: "Your comment"
+          }
+          
+    responses:
+      200:
+        body: 
+          application/json:
+            example: |
+               {
+                  "status": true,
+                  "message": "record submitted successfully",
+                  "webRecordId": 323,
+                 "statusCode": 200
+                }
+      403:
+        body: 
+          application/json:
+            example: |
+               {
+                 "status": false,
+                 "errorMessage": "Unable to save the data",
+                 "errorCode": "105",
+                 "statusCode": 403
+                }
+/getBPDetails:
+  description: Get the BP details of the patient
+  get:
+    queryParameters: 
+      patientId:
+        description: "Give the patient ID"
+        required: true
+        minLength: 3
+        type: string
+        example: "23455"
+      limit:
+        description: "Give the limit number"
+        required: true
+        type: number
+        example: 1.03
+      offset:
+        description: "Give the offset number"
+        required: true
+        type: number
+        example: 1.03
+      dateTime:
+        description: "Give the date time"
+        required: true
+        type: datetime-only
+        example: 2015-07-04T21:00:00
+    responses:
+      200:
+        body: 
+          application/json:
+            example: |
+               {
+                  "status": true, 
+                  "message": "device list",
+                   "statusCode": 200,
+                  "data" : [
+                    {
+                    "webRecordId" : 1
+                    "systolic": 135,
+                    "diastolic": 90,
+                    "pulse": 72,
+                    "date": "2017-02-04 22:10",
+                    "comment": "Your comment"
+                    },                  
+                    {
+                    "webRecordId":2
+                    "systolic": 135,
+                    "diastolic": 90,
+                    "pulse" : 72,
+                    "comment" : "",
+                    "date" : "2017-02-04 22:10"
+                    }
+                  ]
+                }
+      403:
+        body: 
+          application/json:
+            example: |
+               {
+                 "status": false,
+                 "errorMessage": "Unable to get the data",
+                 "errorCode": "105",
+                 "statusCode": 403
+                }
+/getFAQ:
+  description: Get the FAQ of the patient
+  get:
+    queryParameters: 
+      device:
+        description: "Give the device"
+        required: true
+        minLength: 3
+        type: string
+        example: "Android"
+      deviceType:
+        description: "Give the device type"
+        required: true
+        type: string
+        example: "BG"
+    responses:
+      200:
+        body: 
+          application/json:
+            example: |
+               {
+                  "status": "true", 
+                  "message": "device list",
+                  "statusCode": 200,
+                  "data" : [
+                    {
+                      "id": 43,
+                      "sortOrder": 1,
+                      "question" : "How to add device",
+                      "type": "BP",
+                      "answer" : "lorem ipsum doller shit amet"
+                    },
+                    {
+                      "id": 32,
+                      "sortOrder": 2,
+                      "question" : "How to remove device",
+                      "type": "BG",
+                      "answer" : "lorem ipsum doller shit amet"
+                    }
+                  ]
+                }
+      403:
+        body: 
+          application/json:
+            example: |
+               {
+                 "status": false,
+                 "errorMessage": "Unable to get the FAQ",
+                 "errorCode": "105",
+                 "statusCode": 403
+                }
+/submitBGRecord:
+  description: Submit the BG record of the patient
+  post:
+    body: 
+      application/json:
+        description: Provide the BG details in the respect of patient
+        example: |
+          {
+          "patientId": 32323,
+           "measurement": 135,
+           "nomenclature": "FBS",
+           "dateTime": "2017-02-14 22:40:00",
+           "comment: "Your comment",
+           "webRecordId": ""
+          }
+          
+    responses:
+      200:
+        body: 
+          application/json:
+            example: |
+               {
+                  "status": true,
+                  "message": "record submitted successfully",
+                  "webRecordId": 323,
+                 "statusCode": 200
+                }
+      403:
+        body: 
+          application/json:
+            example: |
+               {
+                 "status": false,
+                 "errorMessage": "Unable to save the data",
+                 "errorCode": "105",
+                 "statusCode": 403
+                }
+/submitBGComments:
+  description: Submit the BG comments of the patient
+  post:
+    body: 
+      application/json:
+        description: Provide the BG details in the respect of patient
+        example: |
+          {
+           "patientId": 32323,
+           "measurement": 135,
+           "nomenclature": "FBS",
+           "dateTime": "2017-02-14 22:40:00",
+           "comment: "Your comment",
+           "webRecordId": "",
+           "entryType": "Automatic"
+          }
+          
+    responses:
+      200:
+        body: 
+          application/json:
+            example: |
+               {
+                  "status": true,
+                  "message": "record submitted successfully",
+                  "webRecordId": 323,
+                 "statusCode": 200
+                }
+      403:
+        body: 
+          application/json:
+            example: |
+               {
+                 "status": false,
+                 "errorMessage": "Unable to save the data",
+                 "errorCode": "105",
+                 "statusCode": 403
+                }
+/getBGDetails:
+  description: Get the BG details of the patient
+  get:
+    queryParameters: 
+      patientId:
+        description: "Give the patient ID"
+        required: true
+        minLength: 3
+        type: string
+        example: "32323"
+      limit:
+        description: "Give the limit number"
+        required: true
+        type: number
+        example: 1.03
+      offset:
+        description: "Give the offset number"
+        required: true
+        type: number
+        example: 1.03
+      dateTime:
+        description: "Give the date time"
+        required: true
+        type: datetime-only
+        example: 2015-07-04T21:00:00
+    responses:
+      200:
+        body: 
+          application/json:
+            example: |
+                {
+                  "status": true, 
+                  "message": "device list",
+                   "statusCode": 200,
+                  "data" : [
+                    {
+                    "webRecordId" : 1
+                    "measurement": 135,
+                    "nomenclature" : "launch",
+                    "date" : "2017-02-04 22:10"
+                    "comment": "FBS"
+                    "onServer" : true,
+                    entryType: "Automatic"
+                    },
+                    {
+                    "webRecordId":2
+                    "measurement": 135,
+                    "nomenclature" : "PPBS",
+                    "comment" : ""
+                    "date" : "2017-02-04 22:10"
+                    "onServer" : true,
+                    entryType: "Automatic"
+                    }
+                  ]
+                }
+      403:
+        body: 
+          application/json:
+            example: |
+               {
+                 "status": false,
+                 "errorMessage": "Unable to get the data",
+                 "errorCode": "105",
+                 "statusCode": 403
+                }
+/submitHBA1CRecord:
+  description: Submit the HBA1C record of the patient
+  post:
+    body: 
+      application/json:
+        description: Provide the HBA1C details in the respect of patient
+        example: |
+          {
+           "patientId": 32323,
+           "measurement": 135,
+           "dateTime": "2017-02-14 22:40:00"
+          }
+          
+    responses:
+      200:
+        body: 
+          application/json:
+            example: |
+               {
+                  "status": true,
+                  "message": "record submitted successfully",
+                  "webRecordId": 323,
+                 "statusCode": 200
+                }
+      403:
+        body: 
+          application/json:
+            example: |
+               {
+                 "status": false,
+                 "errorMessage": "Unable to save the data",
+                 "errorCode": "105",
+                 "statusCode": 403
+                }
+/getPatientPlan:
+  description: Get the BG details of the patient
+  get:
+    queryParameters: 
+      patientId:
+        description: "Give the patient ID"
+        required: true
+        minLength: 3
+        type: string
+        example: "32323"
+    responses:
+      200:
+        body: 
+          application/json:
+            example: |
+                {
+                  "status": true,
+                   "planId": 1,
+                   "planName": "Test Plan",
+                   "startDate": "2017-02-23",
+                   "startEnd": "2018-02-22",
+                   "statusCode": 200
+                }
+      403:
+        body: 
+          application/json:
+            example: |
+               {
+                 "status": false,
+                 "errorMessage": "Unable to get the plan details",
+                 "errorCode": "105",
+                 "statusCode": 403
+                }
+/getExploreScreen:
+  description: Explore the screen
+  get:
+    responses:
+      200:
+        body: 
+          application/json:
+            example: |
+                {
+                   "status": true,
+                   "message": "explore list",
+                   "statusCode": 200,
+                   "data": [{
+                    "title": "Screen 1",
+                    "description": "<html description>"
+                   }, {
+                    "title": "Screen 2",
+                    "description": "<html description>"
+                   }]
+                }
+      403:
+        body: 
+          application/json:
+            example: |
+               {
+                 "status": false,
+                  "errorMessage": "Unable to get the details",
+                  "errorCode": "105",
+                  "statusCode": 403
+                }
+/getUnitMeasurements:
+  description: Get measurement
+  get:
+    responses:
+      200:
+        body: 
+          application/json:
+            example: |
+                {
+                   "status": true,
+                   "message": "master data list",
+                   "statusCode": 200,
+                   "height": [{
+                    "id": 1,
+                    "label": "Centimeter",
+                    "value": "CM"
+                   }, {
+                    "id": 2,
+                    "label": "Inche",
+                    "value": "Inc"
+                   }],
+                   "weight": [{
+                    "id": 1,
+                    "label": "Kilogram",
+                    "value": "Kg"
+                   }, {
+                    "id": 2,
+                    "label": "Pound",
+                    "value": ""
+                   }]
+                }
+      403:
+        body: 
+          application/json:
+            example: |
+               {
+                 "status": false,
+                  "errorMessage": "Unable to get the details",
+                  "errorCode": "105",
+                  "statusCode": 403
+                }
+/getTermAndCondition:
+  description: Get the the term and condition
+  get:
+    queryParameters: 
+      patientId:
+        description: "Give the patient ID"
+        required: true
+        minLength: 3
+        type: string
+        example: "32323"        
+      device:
+        description: "Give the device"
+        required: true
+        minLength: 3
+        type: string
+        example: "Android"
+    responses:
+      200:
+        body: 
+          application/json:
+            example: |
+                {
+                   "status": true,
+                    "message": "email has been updated successfully",
+                    "agreementContent": "Term and condition text",
+                    "statusCode": 200
+                }
+      403:
+        body: 
+          application/json:
+            example: |
+               {
+                 "status": false,
+                 "errorMessage": "Unable to get the details",
+                 "errorCode": "105",
+                 "statusCode": 403
+                }
+/updatePatientProfileDetails:
+  description: Update the patient profile
+  post:
+    body: 
+      application/json:
+        description: Provide the profile details in the respect of patient
+        example: |
+          {
+          "patientId": 32323,
+           "height": 178,
+           "heightUnit": 2,
+           "weight": 64,
+           "weightUnit": 1
+          }
+          
+    responses:
+      200:
+        body: 
+          application/json:
+            example: |
+               {
+                  "status": true,
+                  "message": "Profile has been updated successfully",
+                  "webRecordId": 323,
+                 "statusCode": 200
+                }
+      403:
+        body: 
+          application/json:
+            example: |
+               {
+                 "status": false,
+                 "errorMessage": "Unable to update the data",
+                 "errorCode": "105",
+                 "statusCode": 403
+                }
+/changeEmail:
+  description: Update the email of the patient
+  post:
+    body: 
+      application/json:
+        description: Provide the profile details in the respect of patient
+        example: |
+          {
+            "patientId": 32323,
+            "email": "jsmith@yahoo.com"
+          }
+          
+    responses:
+      200:
+        body: 
+          application/json:
+            example: |
+               {
+                    "status": true,
+                    "message": "email has been updated successfully",
+                    "statusCode": 200
+                }
+      403:
+        body: 
+          application/json:
+            example: |
+               {
+                 "status": false,
+                 "errorMessage": "Unable to update the email",
+                 "errorCode": "105",
+                 "statusCode": 403
+                }
+/saveAndriodDeviceID:
+  description: Save Andriod Device ID
+  post:
+    body: 
+      application/json:
+        description: Save the patient android device id
+        example: |
+          {
+            "patientId": 32323,
+            "deviceId": "",
+            "device": "Andriod"
+          }
+          
+    responses:
+      200:
+        body: 
+          application/json:
+            example: |
+               {
+                    "status": true,
+                    "message": "Recod saved successfully",
+                    "statusCode": 200
+                }
+      403:
+        body: 
+          application/json:
+            example: |
+               {
+                 "status": false,
+                 "errorMessage": "Unable to save the data",
+                 "errorCode": "105",
+                 "statusCode": 403
+                }  
+/logout:
+  description: Logout from the device
+  post:
+    body: 
+      application/json:
+        description: The input paylod from logout the system.
+        example: |
+          {
+            "patientId": 32323,
+            "deviceId": "",
+            "device": "Andriod"
+          }          
+    responses:
+      200:
+        body: 
+          application/json:
+            example: |
+               {
+                    "status": true,
+                    "message": "logout successful",
+                    "statusCode": 200
+                }
+      403:
+        body: 
+          application/json:
+            example: |
+               {
+                 "status": false,
+                 "errorMessage": "Unable to logout from the system",
+                 "errorCode": "105",
+                 "statusCode": 403
+                }
+/getTargetRange:
+  description: Get the target range of the patient
+  get:
+    queryParameters: 
+      patientId:
+        description: "Give the patient ID"
+        required: true
+        minLength: 3
+        type: string
+        example: "23455"
+    responses:
+      200:
+        body: 
+          application/json:
+            example: |
+               {
+                  "status": true,
+                  "message": "Taget range",
+                  "statusCode": 200,
+                  "BPRange": {
+                    "systolicLowerValue": "110",
+                    "systolicUppperValue": "130",
+                    "diastolicLowerValue": "90",
+                    "diastolicUppperValue": "70",
+                    "pulseLowerValue": "90",
+                    "pulseUppperValue": "70"
+                   },
+                  "BGRange": {
+                    "fbsLowerValue": "100",
+                    "fbsUppperValue": "110",
+                    "ppbsLowerValue": "90",
+                    "ppbsUppperValue": "120",
+                    "rbsLowerValue": "80",
+                    "rbsUppperValue": "110"
+                   }
+                }
+      403:
+        body: 
+          application/json:
+            example: |
+               {
+                 "status": false,
+                 "errorMessage": "Unable to get patient regime data",
+                 "errorCode": "105",
+                 "statusCode": 403
+                }
+/getDailySchedule:
+  description: Get the daily schedule of the patient
+  get:
+    queryParameters: 
+      patientId:
+        description: "Give the patient ID"
+        required: true
+        minLength: 3
+        type: string
+        example: "23455"
+    responses:
+      200:
+        body: 
+          application/json:
+            example: |
+               {
+                  "status": true,
+                  "message": "Daily schedule details",
+                  "statusCode": 200
+                  "data":{
+                    "wakeupTime": "6:30",
+                    "breakfastTime": "9:30",
+                    "sleepingTime": "22:00"
+                    }
+                }
+      403:
+        body: 
+          application/json:
+            example: |
+               {
+                 "status": false,
+                 "errorMessage": "Unable to get the daily schedule details",
+                 "errorCode": "105",
+                 "statusCode": 403
+                }
+/updateSchedule:
+  description: Update the schedule of the patient
+  post:
+    body: 
+      application/json:
+        description: Update schedule
+        example: |
+          {
+            "patientId": "32323"
+            "wakeupTime": "6:30",
+            "breakfastTime": "9:30",
+            "sleepingTime": "22:00"
+          }
+          
+    responses:
+      200:
+        body: 
+          application/json:
+            example: |
+               {
+                    "status": true,
+                    "message": "Daily scheduled updated successfully",
+                    "statusCode": 200
+                }
+      403:
+        body: 
+          application/json:
+            example: |
+               {
+                 "status": false,
+                 "errorMessage": "Unable to update the daily schedule",
+                 "errorCode": "105",
+                 "statusCode": 403
+                }  
+/getNomenclature:
+  description: Get the nomenclature of the patient
+  get:
+    queryParameters: 
+      patientId:
+        description: "Give the patient ID"
+        required: true
+        minLength: 3
+        type: string
+        example: "23455"
+    responses:
+      200:
+        body: 
+          application/json:
+            example: |
+               {
+                 "status": true,
+                 "message": "Nomenclature details",
+                 "statusCode": 200,
+                 "data": {
+                  "fbsStartTime": "7:00",
+                  "fbsEndTime": "9:00",
+                  "ppbsStartTime": "10:00",
+                  "ppbsEndTime": "14:00",
+                  "rbsStartTime": "15:00",
+                  "rbsEndTime": "22:00"
+                 }                
+                }
+      403:
+        body: 
+          application/json:
+            example: |
+               {
+                  "status": false,
+                   "errorMessage": "Unable to get the details",
+                   "errorCode": "105",
+                   "statusCode": 403
+                }
+/updateNomenclature:
+  description: Update the nomenclature of the patient
+  post:
+    body: 
+      application/json:
+        description: Provide the nomenclature details in the respect of patient
+        example: |
+          {
+           "patientId": 32323
+           "fbsStartTime": "7:00",
+           "fbsEndTime": "9:00",
+           "ppbsStartTime": "10:00",
+           "ppbsEndTime": "14:00",
+           "rbsStartTime": "15:00",
+           "rbsEndTime": "22:00"
+          }
+          
+    responses:
+      200:
+        body: 
+          application/json:
+            example: |
+               {
+                  "status": true,
+                  "message": "nomenclature updated successfully",
+                 "statusCode": 200
+                }
+      403:
+        body: 
+          application/json:
+            example: |
+               {
+                 "status": false,
+                 "errorMessage": "Unable to nomenclature update",
+                 "errorCode": "105",
+                 "statusCode": 403
+                }
+/saveRTFDetails:
+  description: Submit the BG record of the patient
+  post:
+    body: 
+      application/json:
+        description: Provide the BG details in the respect of patient
+        example: |
+          {
+          "patientId": 32323,
+           "name": "John Smith",
+           "email": "jsimth@yahoo.com",
+           "phone": "45678923",
+           "comment": "your comment"
+          }
+          
+    responses:
+      200:
+        body: 
+          application/json:
+            example: |
+               {
+                  "status": true,
+                  "message": "RTF saved successfully",
+                 "statusCode": 200
+                }
+      403:
+        body: 
+          application/json:
+            example: |
+               {
+                 "status": false,
+                 "errorMessage": "Unable to save the RTF details",
+                 "errorCode": "105",
+                 "statusCode": 403
+                }
+/emailBG-BPResult:
+  description: Email the BG record of the patient
+  post:
+    body: 
+      application/json:
+        description: Email the BG/BP details in the respect of patient
+        example: |
+          {
+           "patientId": 32323,
+           "email": "jsmith@yahoo.com",
+           "timeFilter": "Last Week/Month/Quarter/Year",
+           "startDate": "2017-01-01",
+           "endDate": "2017-03-24"
+          }
+          
+    responses:
+      200:
+        body: 
+          application/json:
+            example: |
+               {
+                  "status": true,
+                  "message": "Report has been mailed successfully",
+                 "statusCode": 200
+                }
+      403:
+        body: 
+          application/json:
+            example: |
+               {
+                 "status": false,
+                 "errorMessage": "Unable to send the email report",
+                 "errorCode": "105",
+                 "statusCode": 403
+                }
+/getHBA1CDetail:
+  description: Get the HBA1C details for the patient
+  get:
+    queryParameters: 
+      patientId:
+        description: "Give the patient ID"
+        required: true
+        minLength: 3
+        type: string
+        example: "23455"
+    responses:
+      200:
+        body: 
+          application/json:
+            example: |
+               {
+                  "status": true,
+                  "message": "HBA1C Deatils successfully",
+                  "HBA1C": "56",
+                  "statusCode": 200                 
+                }
+      403:
+        body: 
+          application/json:
+            example: |
+               {
+                  "status": false,
+                   "errorMessage": "Unable to find the devices",
+                   "errorCode": "105",
+                   "statusCode": 403
+                }
+/updateHBA1CDetail:
+  description: Update HBA1C Details of the patient
+  post:
+    body: 
+      application/json:
+        description: Provide the HBA1C details in the respect of patient
+        example: |
+          {
+           "patientId": 32323,
+           "HBA1C": "56"
+          }          
+    responses:
+      200:
+        body: 
+          application/json:
+            example: |
+               {
+                  "status": true,
+                  "message": "HBA1C updated successfully",
+                 "statusCode": 200
+                }
+      403:
+        body: 
+          application/json:
+            example: |
+               {
+                 "status": false,
+                 "errorMessage": "Unable to update the HBA1C details",
+                 "errorCode": "105",
+                 "statusCode": 403
+                }

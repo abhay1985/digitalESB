@@ -2,8 +2,7 @@
 title: User API
 version: v1
 description: User Module
-#baseUri: http://acc.com/user-api/{version}
-baseUri: https://mocksvc.mulesoft.com/mocks/09e138f5-12b5-4f2f-9581-71384ef7f8b1/user-api/{version}
+baseUri: http://acc.com/user-api/{version}
 mediaType: application/json
 /validateUser:
   description: Validate the user credential
@@ -43,34 +42,53 @@ mediaType: application/json
                   "errorCode": "1001",
                   "statusCode": "401"
                 }
-/getUserById/userId/{id}:
+/getUserById:
   description: Get user detail by there ID
   get:
-    responses: 
-      201:
-        body: 
-          application/json:
-            example: |
-              "test"
+    queryParameters: 
+      patientId:
+        description: "Give the patient ID"
+        required: true
+        minLength: 3
+        type: string
+        example: "23455"
+    responses:
       200:
         body: 
           application/json:
             example: | 
               {
-               "status": "true",
-                "user_id": 1,
-                 "user_group": 1,
-                 "details": {
-                    "name": "Amit Singh",
-                    "email": "",
-                   },
-                 "status": "Active",
-                 "last_login": "YYYY-MM-DD H:i:s", "output_param1": "",
-                 "output_param2": "",
-                 "output_param3": "",
-                 "output_param4": ""
-               "message" : "Success",
-               "statusCode": "200"
+                "status": "true",
+                "message": "User info fetched",
+                "statusCode": "200",
+                "data": {
+                   "patientId": "1",
+                   "name": "Ashish",
+                   "userEmail": "abc@xyz.com",
+                   "profilePic": "http:///www.test.com/test.jpg",
+                   "ethnicOrigin": "",
+                   "occupation": "",
+                   "companyName": "",
+                   "languages": "English, Urdu",
+                   "DOB": "1984-10-23",
+                   "height": "165 cms",
+                   "weight": "65 kg",
+                   "contactTime": "",
+                   "maritalStatus": "",
+                   "homeAddress": "",
+                   "physicalChallenged": "Yes",
+                   "challengesDetail": "",
+                    "foodAllergy": "No",
+                   "drugAllergy": "Yes",
+                   "drugAllergyDetail": "",
+                   "wakeupTime": "",
+                   "breakfastTime": "",
+                   "dinnerTime": "",
+                   "bedTime": "",
+                   "extraField1": "",
+                   "extraField2": "",
+                   "extraField3": "",
+                  }
                 }
       401:
         body: 
@@ -82,78 +100,7 @@ mediaType: application/json
                  "errorCode": "1002",
                  "statusCode": "401"
                 }
-/forgotPassword/userId/{id}:
-  description: Retrieve the password for the user
-  get:
-    responses:
-      200:
-        body: 
-          application/json:
-            example: |
-              {
-                   "status": "true",
-                   "message" : "Success",
-                   "statusCode": "200"
-                }
-      401:
-        body: 
-          application/json:
-            example: |
-              {
-                 "status": "false",
-                 "errorMessage": "User ID doesn't exist",
-                 "errorCode": "1002",
-                 "statusCode": "401"
-                }
-/resetUserPassword/userId/{id}:
-  description: Re-set the password of the user
-  get:
-    responses:
-      200:
-        body: 
-          application/json:
-            example: |
-              {
-                   "status": "true",
-                   "message" : "Password Reset Succesful",
-                   "statusCode": "200"
-                }
-      401:
-        body: 
-          application/json:
-            example: |
-              {
-                 "status": "false",
-                 "errorMessage": "User ID doesn't exist",
-                 "errorCode": "1002",
-                 "statusCode": "401"
-                }
-/getUserByKey/key/{id}:
-  description: Get the user details by the respected user key
-  get:
-    responses:
-      200:
-        body: 
-          application/json:
-            example: |
-              {
-                   "status": "true",
-                   "agreementStatus": "Accepted",
-                   "message" : "Terms & conditions already accepted",
-                   "statusCode": "200"
-                }
-      401:
-        body: 
-          application/json:
-            example: |
-              {
-                 "status": "false",
-                 "errorMessage": "Unable to fine the user by the respected key.",
-                 "errorCode": "1002",
-                 "statusCode": "401"
-                }
-
-/SendOTP:
+/sendOTP:
     description: Send the OTP to the target system
     post:
       body: 
@@ -184,7 +131,7 @@ mediaType: application/json
                    "errorCode": "1001",
                    "statusCode": "401"
                 }
-/OTPVerfication:
+/verficationOTP:
     description: Validate the OTP
     post:
       body: 
@@ -192,9 +139,11 @@ mediaType: application/json
           description: Provide the login information
           example: |
             { 
-              "patientId": "32323",
-              "OTP": "434343",
-              "otpType": "1"
+              "patientId": 32323,
+               "OTP": "434343",
+               "otpType": 1,
+               "deviceId": "3333343",
+               "device": "Andriod"
             }
       responses:
         200:
@@ -247,10 +196,16 @@ mediaType: application/json
                  "errorCode": "1002",
                  "statusCode": "403"
                 }
-                
-/chkAgreementStatus/patientId/{id}:
+/chkAgreementStatus:
     description: Check Agreement Status
     get:
+      queryParameters: 
+        patientId:
+          description: "Give the patient ID"
+          required: true
+          minLength: 3
+          type: string
+          example: "23455"
       responses:
         200:
           body: 
@@ -303,57 +258,6 @@ mediaType: application/json
                  "errorCode": "1002",
                  "statusCode": "403"
                 }
-/userDetail/patientId/{id}:
-    description: User Detail API
-    get:
-      responses:
-        200:
-          body: 
-            application/json:
-              example: |
-                {
-                "status": "true",
-                "message": "User info fetched",
-                "statusCode": "200",
-                "data": {
-                   "patientId": "1",
-                   "name": "Ashish",
-                   "userEmail": "abc@xyz.com",
-                   "profilePic": "http:///www.test.com/test.jpg",
-                   "ethnicOrigin": "",
-                   "occupation": "",
-                   "companyName": "",
-                   "languages": "English, Urdu",
-                   "DOB": "1984-10-23",
-                   "height": "165 cms",
-                   "weight": "65 kg",
-                   "contactTime": "",
-                   "maritalStatus": "",
-                   "homeAddress": "",
-                   "physicalChallenged": "Yes",
-                   "challengesDetail": "",
-                    "foodAllergy": "No",
-                   "drugAllergy": "Yes",
-                   "drugAllergyDetail": "",
-                   "wakeupTime": "",
-                   "breakfastTime": "",
-                   "dinnerTime": "",
-                   "bedTime": "",
-                   "extraField1": "",
-                   "extraField2": "",
-                   "extraField3": "",
-                  }
-                }
-        401:
-           body: 
-            application/json:
-              example: |
-                {
-                 "status": "false",
-                 "errorMessage": "Unable to get the details",
-                 "errorCode": "1002",
-                 "statusCode": "401"
-                 }
 /changePassword:
     description: Change Password API
     post:
@@ -419,3 +323,34 @@ mediaType: application/json
                    "errorCode": "1001",
                    "statusCode": "401"
                 }
+/verficationOTPForEmail:
+    description: Validate the OTP for the Email
+    post:
+      body: 
+        application/json:
+          description: Provide the detail information to verify email
+          example: |
+            { 
+              "patientId": 32323,
+              "OTPCode": "434556"
+            }
+      responses:
+        200:
+          body: 
+            application/json:
+              example: |
+                {
+                  "status": true,
+                  "message": "OTP code matched successfully",
+                  "statusCode": 200 
+                }
+        403:
+           body: 
+            application/json:
+              example: |
+               {
+                  "status": false,
+                   "errorMessage": "Unable to match the OTP code",
+                   "errorCode": "105",
+                   "statusCode": 403
+               }

@@ -2,8 +2,8 @@
 title: Some General API like Contact US, API Version etc
 version: v1
 description: Patient Module
-baseUri: http://acc.com/generic-api/{version}
-#baseUri: https://mocksvc.mulesoft.com/mocks/a500e47f-a38e-4ac9-a612-46bad72b1853/generic-api/{version}
+#baseUri: http://acc.com/generic-api/{version}
+baseUri: https://mocksvc.mulesoft.com/mocks/a500e47f-a38e-4ac9-a612-46bad72b1853/generic-api/{version}
 mediaType: application/json
 /getServerAPIVersion:
   description: Get the current server API version
@@ -40,4 +40,66 @@ mediaType: application/json
                    "errorMessage": "Unable to get the API Version Number",
                    "errorCode": "105",
                    "statusCode": 401
+                }
+/submitFeedback:
+    description: Submit the feedback
+    post:
+      body: 
+        application/json:
+          description: Provide the detail information
+          example: |
+            {
+              "patientId": 3434,
+              "subject": "This is sample title", 
+              "message": "Sample Descritpion"
+            }
+      responses:
+        200:
+          body: 
+            application/json:
+              example: |
+                 {                  
+                  "status": true,
+                  "message": "feedback submitted"
+                 }
+        403:
+           body: 
+            application/json:
+              example: |
+                {
+                 "status": false,
+                 "errorMessage": "Unable to save the data",
+                 "errorCode": "105"
+                }
+/callSubmit:
+    description: Submit the API call
+    post:
+      body: 
+        application/json:
+          description: Provide the detail information
+          example: |
+            {
+             "patientId": 3434,
+             "reason": "reason for callback/appointment",
+             "requestType":"callback/appointment"
+            }
+      responses:
+        200:
+          body: 
+            application/json:
+              example: |
+                {
+                  "status": true,
+                  "statusCode": 200,
+                  "message": "Your reques for callback/appointment has been submitted.",
+                }
+        403:
+           body: 
+            application/json:
+              example: |
+                {
+                   "status": false,
+                   "errorMessage": "Unable to save the data",
+                   "errorCode": "105",
+                   "statusCode": 403
                 }
