@@ -1,121 +1,162 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
-http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-current.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
-http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
-http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
-    
-    <context:property-placeholder
-		location="file:///${accapp.integration.configuration.home}/acc_domain/apps-conf/digital-accapp-user.properties" />
-		
-    <apikit:config name="user-config" raml="user.raml" consoleEnabled="false" doc:name="Router"/>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:context="http://www.springframework.org/schema/context" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation=" http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-current.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+    <context:property-placeholder location="file:///${accapp.integration.configuration.home}/acc_domain/apps-conf/digital-accapp-user.properties" />
+    <spring:beans>
+        <spring:import resource="classpath:common-flow-fragments.xml" />
+    </spring:beans>
+    <apikit:config name="user-config" raml="user.raml" consoleEnabled="false" doc:name="Router" />
     <flow name="user-main">
-        <http:listener config-ref="DomainHttpListenerConfiguration" path="/user-api/${user.api.version}/*" doc:name="HTTP"/>
-        <apikit:router config-ref="user-config" doc:name="APIkit Router"/>
-        <exception-strategy ref="user-apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy"/>
+        <http:listener config-ref="DomainHttpListenerConfiguration" path="/${user.api.version}/user/*" doc:name="HTTP" />
+        <apikit:router config-ref="user-config" doc:name="APIkit Router" />
+        <exception-strategy ref="user-apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy" />
     </flow>
     <flow name="user-console">
-        <http:listener config-ref="DomainHttpListenerConfiguration" path="/user-console/${user.api.version}/*" doc:name="HTTP"/>
-        <apikit:console config-ref="user-config" doc:name="APIkit Console"/>
+        <http:listener config-ref="DomainHttpListenerConfiguration" path="/user-console/*" doc:name="HTTP" />
+        <apikit:console config-ref="user-config" doc:name="APIkit Console" />
+    </flow> 
+    
+    <flow name="get:/getAgreementStatus:user-config">
+        <logger message="Patient ID to check Agreement Status: #[message.inboundProperties.'http.query.params'.patientId]" level="INFO" doc:name="Logger" />
+        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${getAgreementStatus.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP">
+            <http:request-builder>
+                <http:query-params expression="#[message.inboundProperties['http.query.params']]" />
+                <http:header headerName="AuthToken" value="#[message.inboundProperties.'http.headers'.AuthToken]"/>
+                <http:header headerName="Content-Type" value="application/json"/>
+            </http:request-builder>
+        </http:request>
+        <logger message="Agreement status response: #[payload]" level="INFO" doc:name="Logger" />
     </flow>
-    <flow name="get:/chkAgreementStatus:user-config">
-        <logger message="Patient ID to check Agreement Status: #[message.inboundProperties.'http.query.params'.patientId]" level="INFO" doc:name="Logger"/>
-        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${chkAgreementStatus.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP">
+    <flow name="get:/getPatientById:user-config">
+        <set-property propertyName="Content-Type" value="application/json" doc:name="Property" />
+        <logger message="Get user details of the user ID:: #[message.inboundProperties.'http.query.params'.patientId]" level="INFO" doc:name="Logger" />
+        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${getPatientById.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP">
             <http:request-builder>
-                <http:query-params expression="#[message.inboundProperties['http.query.params']]"/>
+                <http:query-params expression="#[message.inboundProperties['http.query.params']]" />
+                <http:header headerName="AuthToken" value="#[message.inboundProperties.'http.headers'.AuthToken]"/>
+                <http:header headerName="Content-Type" value="application/json"/>
             </http:request-builder>
         </http:request>
-        <logger message="Agreement status response: #[payload]" level="INFO" doc:name="Logger"/>
-    </flow>    
-    <flow name="get:/getUserById:user-config">
-        <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
-        <logger message="Get user details of the user ID:: #[message.inboundProperties.'http.query.params'.patientId]" level="INFO" doc:name="Logger"/>
-        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${getUserById.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP">
-            <http:request-builder>
-                <http:query-params expression="#[message.inboundProperties['http.query.params']]"/>
-            </http:request-builder>
-        </http:request>
-        <logger message="User detail response: #[payload]" level="INFO" doc:name="Logger"/>
+        <logger message="User detail response: #[payload]" level="INFO" doc:name="Logger" />
     </flow>
     <flow name="post:/changePassword:user-config">
-        <logger message="Change password request data: #[payload]" level="INFO" doc:name="Logger"/>
-        <object-to-string-transformer doc:name="Object to String"/>
-        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${changePassword.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP"/>            
-        <logger level="INFO" doc:name="Logger" message="Change password response data: #[payload]"/>
+        <logger message="Change password request data: #[payload]" level="INFO" doc:name="Logger" />
+        <object-to-string-transformer doc:name="Object to String" />        
+        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${changePassword.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP" >
+        	<http:request-builder>
+                <http:header headerName="AuthToken" value="#[message.inboundProperties.'http.headers'.AuthToken]"/>
+                <http:header headerName="Content-Type" value="application/json"/>
+            </http:request-builder>
+        </http:request>
+        <logger level="INFO" doc:name="Logger" message="Change password response data: #[payload]" />
     </flow>
-    <flow name="post:/resetPasswordOTP:user-config">
-        <logger message="Reset password request data: #[payload]" level="INFO" doc:name="Logger"/>
-        <object-to-string-transformer doc:name="Object to String"/>
-        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${resetPassword.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP"/>            
-        <logger level="INFO" doc:name="Logger" message="Reset password response data: #[payload]"/>
+    <flow name="post:/forgotPassword:user-config">
+        <logger message="Forgot password request data: #[payload]" level="INFO" doc:name="Logger" />
+        <object-to-string-transformer doc:name="Object to String" />        
+        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${forgotPassword.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP" >
+        	<http:request-builder>
+                <http:header headerName="AuthToken" value="#[message.inboundProperties.'http.headers'.AuthToken]"/>
+                <http:header headerName="Content-Type" value="application/json"/>
+            </http:request-builder>
+        </http:request>
+        <logger level="INFO" doc:name="Logger" message="Forgot password response data: #[payload]" />
     </flow>
-    <flow name="post:/sendOTP:user-config">
-        <logger message="Forgot password request data: #[payload]" level="INFO" doc:name="Logger"/>
-        <object-to-string-transformer doc:name="Object to String"/>
-        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${forgotPassword.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP"/>            
-        <logger level="INFO" doc:name="Logger" message="Forgot password response data: #[payload]"/>
+    <flow name="post:/guestSignUp:user-config">
+        <logger message="Guest user request data: #[payload]" level="INFO" doc:name="Logger" />
+        <object-to-string-transformer doc:name="Object to String" />
+        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${submitFormForGuest.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP" >
+        	<http:request-builder>
+                <http:header headerName="AuthToken" value="#[message.inboundProperties.'http.headers'.AuthToken]"/>
+                <http:header headerName="Content-Type" value="application/json"/>
+            </http:request-builder>
+        </http:request>
+        <logger level="INFO" doc:name="Logger" message="Guest user response data: #[payload]" />
     </flow>
-    <flow name="post:/submitFormForGuest:user-config">
-        <logger message="Guest user request data: #[payload]" level="INFO" doc:name="Logger"/>
-        <object-to-string-transformer doc:name="Object to String"/>
-        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${submitFormForGuest.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP"/>            
-        <logger level="INFO" doc:name="Logger" message="Guest user response data: #[payload]"/>
+    <flow name="post:/login:user-config">
+        <logger message="User login request data: #[payload]" level="INFO" doc:name="Logger" />
+        <object-to-string-transformer doc:name="Object to String" />
+        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${login.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP" >
+        	<http:request-builder>
+                <http:header headerName="AuthToken" value="#[message.inboundProperties.'http.headers'.AuthToken]"/>
+                <http:header headerName="Content-Type" value="application/json"/>
+            </http:request-builder>
+        </http:request>
+        <logger level="INFO" doc:name="Logger" message="User login response data: #[payload]" />
     </flow>
-    <flow name="post:/takeAgreement:user-config">
-        <logger message="Aggrement status request data: #[payload]" level="INFO" doc:name="Logger"/>
+    <flow name="post:/logoutApp:user-config">
+        <logger message="Logout request data: #[payload]" level="INFO" doc:name="Logger"/>
         <object-to-string-transformer doc:name="Object to String"/>
-        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${saveAggrement.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP"/>            
-        <logger level="INFO" doc:name="Logger" message="Aggrement status response data: #[payload]"/>
+        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${logout.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP">
+        	<http:request-builder>
+                <http:header headerName="AuthToken" value="#[message.inboundProperties.'http.headers'.AuthToken]"/>
+                <http:header headerName="Content-Type" value="application/json"/>
+            </http:request-builder>
+        </http:request>            
+        <logger level="INFO" doc:name="Logger" message="Logout response data: #[payload]"/>
     </flow>
-    <flow name="post:/validateUser:user-config">
-        <logger message="User login request data: #[payload]" level="INFO" doc:name="Logger"/>
-        <object-to-string-transformer doc:name="Object to String"/>
-        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${login.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP"/>            
-        <logger level="INFO" doc:name="Logger" message="User login response data: #[payload]"/>
+    <flow name="post:/resetPassword:user-config">
+        <logger message="Reset password request data: #[payload]" level="INFO" doc:name="Logger" />
+        <object-to-string-transformer doc:name="Object to String" />
+        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${resetPassword.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP" >
+        	<http:request-builder>
+                <http:header headerName="AuthToken" value="#[message.inboundProperties.'http.headers'.AuthToken]"/>
+                <http:header headerName="Content-Type" value="application/json"/>
+            </http:request-builder>
+        </http:request>
+        <logger level="INFO" doc:name="Logger" message="Reset password response data: #[payload]" />
     </flow>
-    <flow name="post:/verficationOTP:user-config">
-        <logger message="OTP verification request data: #[payload]" level="INFO" doc:name="Logger"/>
-        <object-to-string-transformer doc:name="Object to String"/>
-        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${verficationOTP.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP"/>            
-        <logger level="INFO" doc:name="Logger" message="OTP verification response data: #[payload]"/>
+    <flow name="post:/saveAgreementStatus:user-config">
+         <logger message="Aggrement status request data: #[payload]" level="INFO" doc:name="Logger" />
+        <object-to-string-transformer doc:name="Object to String" />
+        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${saveAggrement.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP" >
+        	<http:request-builder>
+                <http:header headerName="AuthToken" value="#[message.inboundProperties.'http.headers'.AuthToken]"/>
+                <http:header headerName="Content-Type" value="application/json"/>
+            </http:request-builder>
+        </http:request>    
+        <logger level="INFO" doc:name="Logger" message="Aggrement status response data: #[payload]" />
     </flow>
-    <flow name="post:/verficationOTPForEmail:user-config">
-        <logger message="OTP verification for Email request data: #[payload]" level="INFO" doc:name="Logger"/>
-        <object-to-string-transformer doc:name="Object to String"/>
-        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${verficationOTPForEmail.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP"/>            
-        <logger level="INFO" doc:name="Logger" message="OTP verification for Email response data: #[payload]"/>
+    <flow name="post:/verifyOTP:user-config">
+        <logger message="OTP verification request data: #[payload]" level="INFO" doc:name="Logger" />
+        <object-to-string-transformer doc:name="Object to String" />
+        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${verficationOTP.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP" >
+        	<http:request-builder>
+                <http:header headerName="AuthToken" value="#[message.inboundProperties.'http.headers'.AuthToken]"/>
+                <http:header headerName="Content-Type" value="application/json"/>
+            </http:request-builder>
+        </http:request>
+        <logger level="INFO" doc:name="Logger" message="OTP verification response data: #[payload]" />
     </flow>
+
     <apikit:mapping-exception-strategy name="user-apiKitGlobalExceptionMapping">
         <apikit:mapping statusCode="404">
             <apikit:exception value="org.mule.module.apikit.exception.NotFoundException" />
-            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
-            <set-payload value="{ &quot;message&quot;: &quot;Resource not found&quot; }" doc:name="Set Payload"/>
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property" />
+            <set-payload value="{ &quot;message&quot;: &quot;Resource not found&quot; }" doc:name="Set Payload" />
         </apikit:mapping>
         <apikit:mapping statusCode="405">
             <apikit:exception value="org.mule.module.apikit.exception.MethodNotAllowedException" />
-            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
-            <set-payload value="{ &quot;message&quot;: &quot;Method not allowed&quot; }" doc:name="Set Payload"/>
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property" />
+            <set-payload value="{ &quot;message&quot;: &quot;Method not allowed&quot; }" doc:name="Set Payload" />
         </apikit:mapping>
         <apikit:mapping statusCode="415">
             <apikit:exception value="org.mule.module.apikit.exception.UnsupportedMediaTypeException" />
-            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
-            <set-payload value="{ &quot;message&quot;: &quot;Unsupported media type&quot; }" doc:name="Set Payload"/>
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property" />
+            <set-payload value="{ &quot;message&quot;: &quot;Unsupported media type&quot; }" doc:name="Set Payload" />
         </apikit:mapping>
         <apikit:mapping statusCode="406">
             <apikit:exception value="org.mule.module.apikit.exception.NotAcceptableException" />
-            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
-            <set-payload value="{ &quot;message&quot;: &quot;Not acceptable&quot; }" doc:name="Set Payload"/>
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property" />
+            <set-payload value="{ &quot;message&quot;: &quot;Not acceptable&quot; }" doc:name="Set Payload" />
         </apikit:mapping>
         <apikit:mapping statusCode="400">
             <apikit:exception value="org.mule.module.apikit.exception.BadRequestException" />
-            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
-            <set-payload value="{ &quot;message&quot;: &quot;Bad request&quot; }" doc:name="Set Payload"/>
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property" />
+            <set-payload value="{ &quot;message&quot;: &quot;Bad request&quot; }" doc:name="Set Payload" />
         </apikit:mapping>
         <apikit:mapping statusCode="500">
             <apikit:exception value="java.net.ConnectException" />
-            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
-            <set-payload value="{ &quot;message&quot;: &quot;Try after some time&quot; }" doc:name="Set Payload"/>
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property" />
+            <set-payload value="{ &quot;message&quot;: &quot;Try after some time&quot; }" doc:name="Set Payload" />
         </apikit:mapping>
     </apikit:mapping-exception-strategy>
 </mule>

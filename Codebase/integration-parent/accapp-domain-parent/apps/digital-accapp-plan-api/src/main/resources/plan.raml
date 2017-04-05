@@ -1,0 +1,72 @@
+#%RAML 1.0
+title: Plan API
+version: v1
+description: Plan Module
+baseUri: http://acc.com/{version}/plan
+mediaType: application/json
+/getPlans:
+  get:
+    responses:
+        200:
+          body: 
+            application/json:
+              example: |
+                {
+                   "status": true,
+                   "statusCode": 200,
+                   "plans": [
+                     {
+                      "planId": 1,
+                      "planName": "Test Plan",
+                      "planDetails": "Test Plan"
+                     },
+                     {
+                      "planId": 2,
+                      "planName": "Plan 2",
+                      "planDetails": "Test Plan"
+                     }
+                  ]
+                }
+        403:
+           body: 
+            application/json:
+              example: |
+               {
+                  "status": false,
+                   "errorMessage": "Unable to get the plan",
+                   "errorCode": "105",
+                   "statusCode": 403
+               }
+/getPatientPlan:
+  description: Get the BG details of the patient
+  get:
+    queryParameters: 
+      patientId:
+        description: "Give the patient ID"
+        required: true
+        minLength: 3
+        type: string
+        example: "32323"
+    responses:
+      200:
+        body: 
+          application/json:
+            example: |
+                {
+                  "status": true,
+                   "planId": 1,
+                   "planName": "Test Plan",
+                   "startDate": "2017-02-23",
+                   "startEnd": "2018-02-22",
+                   "statusCode": 200
+                }
+      403:
+        body: 
+          application/json:
+            example: |
+               {
+                 "status": false,
+                 "errorMessage": "Unable to get the plan details",
+                 "errorCode": "105",
+                 "statusCode": 403
+                }

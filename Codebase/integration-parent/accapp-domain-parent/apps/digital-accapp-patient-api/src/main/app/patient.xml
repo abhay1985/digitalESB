@@ -1,263 +1,319 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-current.xsd
-http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
-http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
-http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:context="http://www.springframework.org/schema/context" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-current.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd">
     
-    <context:property-placeholder
-		location="file:///${accapp.integration.configuration.home}/acc_domain/apps-conf/digital-accapp-patient.properties" />
-		
+    <context:property-placeholder location="file:///${accapp.integration.configuration.home}/acc_domain/apps-conf/digital-accapp-patient.properties" />
     
-    <apikit:config name="patient-config" raml="patient.raml" consoleEnabled="false" doc:name="Router"/>
+    <apikit:config name="patient-config" raml="patient.raml" consoleEnabled="false" doc:name="Router" />
     
-    
+    <spring:beans>
+        <spring:import resource="classpath:common-flow-fragments.xml" />
+    </spring:beans>
     
     <flow name="patient-main">
-        <http:listener config-ref="DomainHttpListenerConfiguration" path="/patient-api/${patient.api.version}/*" doc:name="HTTP"/>
-        <apikit:router config-ref="patient-config" doc:name="APIkit Router"/>
-        <exception-strategy ref="patient-apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy"/>
+        <http:listener config-ref="DomainHttpListenerConfiguration" path="/${patient.api.version}/patient/*" doc:name="HTTP" />
+        <apikit:router config-ref="patient-config" doc:name="APIkit Router" />
+        <exception-strategy ref="patient-apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy" />
     </flow>
     <flow name="patient-console">
-        <http:listener config-ref="DomainHttpListenerConfiguration" path="/patient-console/${patient.api.version}/*" doc:name="HTTP"/>
-        <apikit:console config-ref="patient-config" doc:name="APIkit Console"/>
+        <http:listener config-ref="DomainHttpListenerConfiguration" path="/patient-console/*" doc:name="HTTP" />
+        <apikit:console config-ref="patient-config" doc:name="APIkit Console" />
     </flow>
-    <flow name="get:/getAllDeviceDeatils:patient-config">
-        <logger message="Get all device details of the patient ID:: #[message.inboundProperties.'http.query.params'.patientId]" level="INFO" doc:name="Logger"/>
-        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${getAllDeviceDeatils.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP">
-            <http:request-builder>
-                <http:query-params expression="#[message.inboundProperties['http.query.params']]"/>
-
-            </http:request-builder>
-        </http:request>
-        <logger message="Get all device details response: #[payload]" level="INFO" doc:name="Logger"/>
-    </flow>
-    <flow name="get:/getBGDetails:patient-config">
-        <logger message="Get BG details of the patient ID: #[message.inboundProperties.'http.query.params'.patientId]" level="INFO" doc:name="Logger"/>
-        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${getBGDetails.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP">
-            <http:request-builder>
-                <http:query-params expression="#[message.inboundProperties['http.query.params']]"/>
-            </http:request-builder>
-        </http:request>
-        <logger message="Get BG details of the patient ID response: #[payload]" level="INFO" doc:name="Logger"/>
-    </flow>
-    <flow name="get:/getBPDetails:patient-config">
-        <logger message="Get BP details of the patient ID: #[message.inboundProperties.'http.query.params'.patientId]" level="INFO" doc:name="Logger"/>
-        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${getBPDetails.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP">
-            <http:request-builder>
-                <http:query-params expression="#[message.inboundProperties['http.query.params']]"/>
-            </http:request-builder>
-        </http:request>
-        <logger message="Get BP details of the patient ID response: #[payload]" level="INFO" doc:name="Logger"/>
-    </flow>
+   
     <flow name="get:/getDailySchedule:patient-config">
-        <logger message="Get daily schedule of the patient ID:: #[message.inboundProperties.'http.query.params'.patientId]" level="INFO" doc:name="Logger"/>
+        <logger message="Get daily schedule of the patient ID:: #[message.inboundProperties.'http.query.params'.patientId]" level="INFO" doc:name="Logger" />
         <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${getDailySchedule.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP">
             <http:request-builder>
-                <http:query-params expression="#[message.inboundProperties['http.query.params']]"/>
+                <http:query-params expression="#[message.inboundProperties['http.query.params']]" />
+                <http:header headerName="AuthToken" value="#[message.inboundProperties.AuthToken]"/>
+                <http:header headerName="Content-Type" value="application/json"/>
             </http:request-builder>
         </http:request>
-        <logger message="Get daily schedule of the patient response: #[payload]" level="INFO" doc:name="Logger"/>
+        <logger message="Get daily schedule of the patient response: #[payload]" level="INFO" doc:name="Logger" />
     </flow>
     <flow name="get:/getExploreScreen:patient-config">
-        <logger message="Get explore screen request tirgged." level="INFO" doc:name="Logger"/>
+        <logger message="Get explore screen request tirgged." level="INFO" doc:name="Logger" />
         <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${getExploreScreen.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP">
             <http:request-builder>
-                <http:query-params expression="#[message.inboundProperties['http.query.params']]"/>
+                <http:query-params expression="#[message.inboundProperties['http.query.params']]" />
+                <http:header headerName="AuthToken" value="#[message.inboundProperties.AuthToken]"/>
+                <http:header headerName="Content-Type" value="application/json"/>
             </http:request-builder>
         </http:request>
-        <logger message="Get explore screen response: #[payload]" level="INFO" doc:name="Logger"/>
-    </flow>
-    <flow name="get:/getFAQ:patient-config">
-        <logger message="Get FAQ from the device: #[message.inboundProperties.'http.query.params'.device]" level="INFO" doc:name="Logger"/>
-        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${getFAQ.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP">
-            <http:request-builder>
-                <http:query-params expression="#[message.inboundProperties['http.query.params']]"/>
-            </http:request-builder>
-        </http:request>
-        <logger message="Get FAQ response: #[payload]" level="INFO" doc:name="Logger"/>
-    </flow>
-    <flow name="get:/getHBA1CDetail:patient-config">
-        <logger message="Get HBA1C details of the patient ID: #[message.inboundProperties.'http.query.params'.patientId]" level="INFO" doc:name="Logger"/>
-        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${getHBA1CDetail.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP">
-            <http:request-builder>
-                <http:query-params expression="#[message.inboundProperties['http.query.params']]"/>
-            </http:request-builder>
-        </http:request>
-        <logger message="Get HBA1C details response: #[payload]" level="INFO" doc:name="Logger"/>
+        <logger message="Get explore screen response: #[payload]" level="INFO" doc:name="Logger" />
     </flow>
     <flow name="get:/getNomenclature:patient-config">
-        <logger message="Get nomenclature details of the patient ID:: #[message.inboundProperties.'http.query.params'.patientId]" level="INFO" doc:name="Logger"/>
+        <logger message="Get nomenclature details of the patient ID:: #[message.inboundProperties.'http.query.params'.patientId]" level="INFO" doc:name="Logger" />
         <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${getNomenclature.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP">
             <http:request-builder>
-                <http:query-params expression="#[message.inboundProperties['http.query.params']]"/>
+                <http:query-params expression="#[message.inboundProperties['http.query.params']]" />
+                <http:header headerName="AuthToken" value="#[message.inboundProperties.AuthToken]"/>
+                <http:header headerName="Content-Type" value="application/json"/>
             </http:request-builder>
         </http:request>
-        <logger message="Get nomenclature details response: #[payload]" level="INFO" doc:name="Logger"/>
-    </flow>
-    <flow name="get:/getPatientPlan:patient-config">
-        <logger message="Get patient plan of the patient ID: #[message.inboundProperties.'http.query.params'.patientId]" level="INFO" doc:name="Logger"/>
-        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${getPatientPlan.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP">
-            <http:request-builder>
-                <http:query-params expression="#[message.inboundProperties['http.query.params']]"/>
-            </http:request-builder>
-        </http:request>
-        <logger message="Get patient plan response: #[payload]" level="INFO" doc:name="Logger"/>
+        <logger message="Get nomenclature details response: #[payload]" level="INFO" doc:name="Logger" />
     </flow>
     <flow name="get:/getTargetRange:patient-config">
-        <logger message="Get target range of the patient ID: #[message.inboundProperties.'http.query.params'.patientId]" level="INFO" doc:name="Logger"/>
+        <logger message="Get target range of the patient ID: #[message.inboundProperties.'http.query.params'.patientId]" level="INFO" doc:name="Logger" />
         <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${getTargetRange.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP">
             <http:request-builder>
-                <http:query-params expression="#[message.inboundProperties['http.query.params']]"/>
+                <http:query-params expression="#[message.inboundProperties['http.query.params']]" />
+                <http:header headerName="AuthToken" value="#[message.inboundProperties.AuthToken]"/>
+                <http:header headerName="Content-Type" value="application/json"/>
             </http:request-builder>
         </http:request>
-        <logger message="Get target range response: #[payload]" level="INFO" doc:name="Logger"/>
-    </flow>
-    <flow name="get:/getTermAndCondition:patient-config">
-        <logger message="Term and condition of the patient ID: #[message.inboundProperties.'http.query.params'.patientId]" level="INFO" doc:name="Logger"/>
-        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${getTermAndCondition.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP">
-            <http:request-builder>
-                <http:query-params expression="#[message.inboundProperties['http.query.params']]"/>
-            </http:request-builder>
-        </http:request>
-        <logger message="Term and condition response: #[payload]" level="INFO" doc:name="Logger"/>
+        <logger message="Get target range response: #[payload]" level="INFO" doc:name="Logger" />
     </flow>
     <flow name="get:/getUnitMeasurements:patient-config">
-        <logger message="Get Unit Measurements request triggered." level="INFO" doc:name="Logger"/>
+        <logger message="Get Unit Measurements request triggered." level="INFO" doc:name="Logger" />
         <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${getUnitMeasurements.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP">
             <http:request-builder>
-                <http:query-params expression="#[message.inboundProperties['http.query.params']]"/>
+                <http:query-params expression="#[message.inboundProperties['http.query.params']]" />
+                <http:header headerName="AuthToken" value="#[message.inboundProperties.AuthToken]"/>
+                <http:header headerName="Content-Type" value="application/json"/>
             </http:request-builder>
         </http:request>
-        <logger message="Unit Measurements response: #[payload]" level="INFO" doc:name="Logger"/>
-    </flow>
-    <flow name="post:/addDeviceDeatils:patient-config">
-        <logger message="Add device deatils request data: #[payload]" level="INFO" doc:name="Logger"/>
-        <object-to-string-transformer doc:name="Object to String"/>
-        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${addDeviceDeatils.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP"/>            
-        <logger level="INFO" doc:name="Logger" message="Add device deatils response data: #[payload]"/>
+        <logger message="Unit Measurements response: #[payload]" level="INFO" doc:name="Logger" />
     </flow>
     <flow name="post:/changeEmail:patient-config">
-        <logger message="Change Email request data: #[payload]" level="INFO" doc:name="Logger"/>
-        <object-to-string-transformer doc:name="Object to String"/>
-        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${changeEmail.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP"/>            
-        <logger level="INFO" doc:name="Logger" message="Change Email response data: #[payload]"/>
+        <logger message="Change Email request data: #[payload]" level="INFO" doc:name="Logger" />
+        <object-to-string-transformer doc:name="Object to String" />
+        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${changeEmail.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP" >
+        	<http:request-builder>
+                <http:header headerName="AuthToken" value="#[message.inboundProperties.AuthToken]"/>
+                <http:header headerName="Content-Type" value="application/json"/>
+            </http:request-builder>
+        </http:request>
+        <logger level="INFO" doc:name="Logger" message="Change Email response data: #[payload]" />
     </flow>
-    <flow name="post:/emailBG-BPResult:patient-config">
-        <logger message="Email BG/BP result request data: #[payload]" level="INFO" doc:name="Logger"/>
-        <object-to-string-transformer doc:name="Object to String"/>
-        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${emailBG-BPResult.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP"/>            
-        <logger level="INFO" doc:name="Logger" message="Email BG/BP result response data: #[payload]"/>
+    <flow name="post:/saveRTF:patient-config">
+        <logger message="Save RTF details request data: #[payload]" level="INFO" doc:name="Logger" />
+        <object-to-string-transformer doc:name="Object to String" />
+        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${saveRTF.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP" >
+        	<http:request-builder>
+                <http:header headerName="AuthToken" value="#[message.inboundProperties.AuthToken]"/>
+                <http:header headerName="Content-Type" value="application/json"/>
+            </http:request-builder>
+        </http:request>
+        <logger level="INFO" doc:name="Logger" message="Save RTF details response data: #[payload]" />
     </flow>
-    <flow name="post:/getPatientDashboardDetail:patient-config">
-        <logger message="Get patient dashboard detail request data: #[payload]" level="INFO" doc:name="Logger"/>
-        <object-to-string-transformer doc:name="Object to String"/>
-        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${getPatientDashboardDetail.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP"/>            
-        <logger level="INFO" doc:name="Logger" message="Get patient dashboard detail response data: #[payload]"/>
+    <flow name="post:/saveBGRecord:patient-config">
+        <logger message="Save BG record request data: #[payload]" level="INFO" doc:name="Logger" />
+        <object-to-string-transformer doc:name="Object to String" />
+        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${saveBGRecord.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP" >
+        	<http:request-builder>
+                <http:header headerName="AuthToken" value="#[message.inboundProperties.AuthToken]"/>
+                <http:header headerName="Content-Type" value="application/json"/>
+            </http:request-builder>
+        </http:request>
+        <logger level="INFO" doc:name="Logger" message="Submit BG record response data: #[payload]" />
     </flow>
-    <flow name="post:/logout:patient-config">
-        <logger message="Logout request data: #[payload]" level="INFO" doc:name="Logger"/>
-        <object-to-string-transformer doc:name="Object to String"/>
-        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${logout.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP"/>            
-        <logger level="INFO" doc:name="Logger" message="Logout response data: #[payload]"/>
+    <flow name="post:/saveBPRecord:patient-config">
+        <logger message="Submit BP record request data: #[payload]" level="INFO" doc:name="Logger" />
+        <object-to-string-transformer doc:name="Object to String" />
+        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${saveBPRecord.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP" >
+        	<http:request-builder>
+                <http:header headerName="AuthToken" value="#[message.inboundProperties.AuthToken]"/>
+                <http:header headerName="Content-Type" value="application/json"/>
+            </http:request-builder>
+        </http:request>
+        <logger level="INFO" doc:name="Logger" message="Submit BP record response data: #[payload]" />
     </flow>
-    <flow name="post:/saveAndriodDeviceID:patient-config">
-        <logger message="Save anriod device data request data: #[payload]" level="INFO" doc:name="Logger"/>
-        <object-to-string-transformer doc:name="Object to String"/>
-        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${saveAndriodDeviceID.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP"/>            
-        <logger level="INFO" doc:name="Logger" message="Save anriod device data response data: #[payload]"/>
+    <flow name="post:/saveHBA1C:patient-config">
+        <logger message="Submit HBA1C request data: #[payload]" level="INFO" doc:name="Logger" />
+        <object-to-string-transformer doc:name="Object to String" />
+        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${saveHBA1C.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP" >
+        	<http:request-builder>
+                <http:header headerName="AuthToken" value="#[message.inboundProperties.AuthToken]"/>
+                <http:header headerName="Content-Type" value="application/json"/>
+            </http:request-builder>
+        </http:request>
+        <logger level="INFO" doc:name="Logger" message="Submit HBA1C response data: #[payload]" />
     </flow>
-    <flow name="post:/saveRTFDetails:patient-config">
-        <logger message="Save RTF details request data: #[payload]" level="INFO" doc:name="Logger"/>
-        <object-to-string-transformer doc:name="Object to String"/>
-        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${saveRTFDetails.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP"/>            
-        <logger level="INFO" doc:name="Logger" message="Save RTF details response data: #[payload]"/>
-    </flow>
-    <flow name="post:/submitBGComments:patient-config">
-        <logger message="Submit BG comments request data: #[payload]" level="INFO" doc:name="Logger"/>
-        <object-to-string-transformer doc:name="Object to String"/>
-        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${submitBGComments.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP"/>            
-        <logger level="INFO" doc:name="Logger" message="Submit BG comments response data: #[payload]"/>
-    </flow>
-    <flow name="post:/submitBGRecord:patient-config">
-        <logger message="Submit BG record request data: #[payload]" level="INFO" doc:name="Logger"/>
-        <object-to-string-transformer doc:name="Object to String"/>
-        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${submitBGRecord.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP"/>            
-        <logger level="INFO" doc:name="Logger" message="Submit BG record response data: #[payload]"/>
-    </flow>
-    <flow name="post:/submitBPComments:patient-config">
-        <logger message="Submit BP comments request data: #[payload]" level="INFO" doc:name="Logger"/>
-        <object-to-string-transformer doc:name="Object to String"/>
-        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${submitBPComments.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP"/>            
-        <logger level="INFO" doc:name="Logger" message="Submit BP comments response data: #[payload]"/>
-    </flow>
-    <flow name="post:/submitBPRecord:patient-config">
-        <logger message="Submit BP record request data: #[payload]" level="INFO" doc:name="Logger"/>
-        <object-to-string-transformer doc:name="Object to String"/>
-        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${submitBPRecord.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP"/>            
-        <logger level="INFO" doc:name="Logger" message="Submit BP record response data: #[payload]"/>
-    </flow>
-    <flow name="post:/submitHBA1CRecord:patient-config">
-        <logger message="Submit HBA1C request data: #[payload]" level="INFO" doc:name="Logger"/>
-        <object-to-string-transformer doc:name="Object to String"/>
-        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${submitHBA1CRecord.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP"/>            
-        <logger level="INFO" doc:name="Logger" message="Submit HBA1C response data: #[payload]"/>
-    </flow>
-    <flow name="post:/updateHBA1CDetail:patient-config">
-        <logger message="Update HBA1C detail request data: #[payload]" level="INFO" doc:name="Logger"/>
-        <object-to-string-transformer doc:name="Object to String"/>
-        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${updateHBA1CDetail.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP"/>            
-        <logger level="INFO" doc:name="Logger" message="Update HBA1C detail response data: #[payload]"/>
+    <flow name="post:/updateHBA1C:patient-config">
+        <logger message="Update HBA1C detail request data: #[payload]" level="INFO" doc:name="Logger" />
+        <object-to-string-transformer doc:name="Object to String" />
+        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${updateHBA1C.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP" >
+        	<http:request-builder>
+                <http:header headerName="AuthToken" value="#[message.inboundProperties.AuthToken]"/>
+                <http:header headerName="Content-Type" value="application/json"/>
+            </http:request-builder>
+        </http:request>
+        <logger level="INFO" doc:name="Logger" message="Update HBA1C detail response data: #[payload]" />
     </flow>
     <flow name="post:/updateNomenclature:patient-config">
-        <logger message="Update nomenclature request data: #[payload]" level="INFO" doc:name="Logger"/>
-        <object-to-string-transformer doc:name="Object to String"/>
-        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${updateNomenclature.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP"/>            
-        <logger level="INFO" doc:name="Logger" message="Update nomenclature response data: #[payload]"/>
+        <logger message="Update nomenclature request data: #[payload]" level="INFO" doc:name="Logger" />
+        <object-to-string-transformer doc:name="Object to String" />
+        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${updateNomenclature.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP" >
+        	<http:request-builder>
+                <http:header headerName="AuthToken" value="#[message.inboundProperties.AuthToken]"/>
+                <http:header headerName="Content-Type" value="application/json"/>
+            </http:request-builder>
+        </http:request>
+        <logger level="INFO" doc:name="Logger" message="Update nomenclature response data: #[payload]" />
     </flow>
-    <flow name="post:/updatePatientProfileDetails:patient-config">
-        <logger message="Update patient profile details request data: #[payload]" level="INFO" doc:name="Logger"/>
-        <object-to-string-transformer doc:name="Object to String"/>
-        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${updatePatientProfileDetails.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP"/>            
-        <logger level="INFO" doc:name="Logger" message="Update patient profile details response data: #[payload]"/>
+    <flow name="post:/updateProfile:patient-config">
+        <logger message="Update patient profile details request data: #[payload]" level="INFO" doc:name="Logger" />
+        <object-to-string-transformer doc:name="Object to String" />
+        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${updateProfile.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP" >
+        	<http:request-builder>
+                <http:header headerName="AuthToken" value="#[message.inboundProperties.AuthToken]"/>
+                <http:header headerName="Content-Type" value="application/json"/>
+            </http:request-builder>
+        </http:request>
+        <logger level="INFO" doc:name="Logger" message="Update patient profile details response data: #[payload]" />
     </flow>
     <flow name="post:/updateSchedule:patient-config">
-        <logger message="Update schedule request data: #[payload]" level="INFO" doc:name="Logger"/>
-        <object-to-string-transformer doc:name="Object to String"/>
-        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${updateSchedule.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP"/>            
-        <logger level="INFO" doc:name="Logger" message="Update schedule response data: #[payload]"/>
+        <logger message="Update schedule request data: #[payload]" level="INFO" doc:name="Logger" />
+        <object-to-string-transformer doc:name="Object to String" />
+        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${updateSchedule.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP" >
+        	<http:request-builder>
+                <http:header headerName="AuthToken" value="#[message.inboundProperties.AuthToken]"/>
+                <http:header headerName="Content-Type" value="application/json"/>
+            </http:request-builder>
+        </http:request>
+        <logger level="INFO" doc:name="Logger" message="Update schedule response data: #[payload]" />
     </flow>
+    <flow name="get:/deviceList:patient-config">
+        <logger message="Get all device details of the patient ID:: #[message.inboundProperties.'http.query.params'.patientId]" level="INFO" doc:name="Logger" />
+        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${deviceList.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP">
+            <http:request-builder>
+                <http:query-params expression="#[message.inboundProperties['http.query.params']]" />
+                <http:header headerName="AuthToken" value="#[message.inboundProperties.AuthToken]"/>
+                <http:header headerName="Content-Type" value="application/json"/>
+            </http:request-builder>
+        </http:request>
+        <logger message="Get all device details response: #[payload]" level="INFO" doc:name="Logger" />
+    </flow>
+    <flow name="get:/getAgreementDetail:patient-config">
+        <logger message="Get the agreement details of the patient ID: #[message.inboundProperties.'http.query.params'.patientId]" level="INFO" doc:name="Logger" />
+        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${getAgreementDetail.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP">
+            <http:request-builder>
+                <http:query-params expression="#[message.inboundProperties['http.query.params']]" />
+                <http:header headerName="AuthToken" value="#[message.inboundProperties.AuthToken]"/>
+                <http:header headerName="Content-Type" value="application/json"/>
+            </http:request-builder>
+        </http:request>
+        <logger message="Get the agreement details response: #[payload]" level="INFO" doc:name="Logger" />
+    </flow>
+    <flow name="get:/getBGRecords:patient-config">
+        <logger message="Get BG details of the patient ID: #[message.inboundProperties.'http.query.params'.patientId]" level="INFO" doc:name="Logger" />
+        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${getBGRecords.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP">
+            <http:request-builder>
+                <http:query-params expression="#[message.inboundProperties['http.query.params']]" />
+                <http:header headerName="AuthToken" value="#[message.inboundProperties.AuthToken]"/>
+                <http:header headerName="Content-Type" value="application/json"/>
+            </http:request-builder>
+        </http:request>
+        <logger message="Get BG details of the patient ID response: #[payload]" level="INFO" doc:name="Logger" />
+    </flow>
+    <flow name="get:/getBPRecords:patient-config">
+        <logger message="Get BP details of the patient ID: #[message.inboundProperties.'http.query.params'.patientId]" level="INFO" doc:name="Logger" />
+        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${getBPRecords.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP">
+            <http:request-builder>
+                <http:query-params expression="#[message.inboundProperties['http.query.params']]" />
+                <http:header headerName="AuthToken" value="#[message.inboundProperties.AuthToken]"/>
+                <http:header headerName="Content-Type" value="application/json"/>
+            </http:request-builder>
+        </http:request>
+        <logger message="Get BP details of the patient ID response: #[payload]" level="INFO" doc:name="Logger" />
+    </flow>
+    <flow name="get:/getHBA1C:patient-config">
+        <logger message="Get HBA1C details of the patient ID: #[message.inboundProperties.'http.query.params'.patientId]" level="INFO" doc:name="Logger" />
+        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${getHBA1C.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP">
+            <http:request-builder>
+                <http:query-params expression="#[message.inboundProperties['http.query.params']]" />
+                <http:header headerName="AuthToken" value="#[message.inboundProperties.AuthToken]"/>
+                <http:header headerName="Content-Type" value="application/json"/>
+            </http:request-builder>
+        </http:request>
+        <logger message="Get HBA1C details response: #[payload]" level="INFO" doc:name="Logger" />
+    </flow>   
+    <flow name="post:/addDevice:patient-config">
+        <logger message="Add device deatils request data: #[payload]" level="INFO" doc:name="Logger" />
+        <object-to-string-transformer doc:name="Object to String" />
+        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${addDevice.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP" >
+        	 <http:request-builder>
+                <http:header headerName="AuthToken" value="#[message.inboundProperties.AuthToken]"/>
+                <http:header headerName="Content-Type" value="application/json"/>
+            </http:request-builder>
+        </http:request>
+        <logger level="INFO" doc:name="Logger" message="Add device deatils response data: #[payload]" />
+    </flow>
+    <flow name="post:/saveAndriodDeviceId:patient-config">
+        <logger message="Save anriod device data request data: #[payload]" level="INFO" doc:name="Logger" />
+        <object-to-string-transformer doc:name="Object to String" />
+        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${saveAndriodDeviceId.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP" >
+        	<http:request-builder>
+                <http:header headerName="AuthToken" value="#[message.inboundProperties.AuthToken]"/>
+                <http:header headerName="Content-Type" value="application/json"/>
+            </http:request-builder>
+        </http:request>
+        <logger level="INFO" doc:name="Logger" message="Save anriod device data response data: #[payload]" />
+    </flow>
+    <flow name="post:/sharePatientReport:patient-config">
+        <logger message="Email BG/BP result request data: #[payload]" level="INFO" doc:name="Logger" />
+        <object-to-string-transformer doc:name="Object to String" />
+        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${sharePatientReport.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP" >
+        	<http:request-builder>
+                <http:header headerName="AuthToken" value="#[message.inboundProperties.AuthToken]"/>
+                <http:header headerName="Content-Type" value="application/json"/>
+            </http:request-builder>
+        </http:request>
+        <logger level="INFO" doc:name="Logger" message="Email BG/BP result response data: #[payload]" />
+    </flow>
+    <flow name="post:/updateBGRecord:patient-config">
+        <logger message="Update BG record request data: #[payload]" level="INFO" doc:name="Logger" />
+        <object-to-string-transformer doc:name="Object to String" />
+        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${updateBGRecord.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP" >
+        	<http:request-builder>
+                <http:header headerName="AuthToken" value="#[message.inboundProperties.AuthToken]"/>
+                <http:header headerName="Content-Type" value="application/json"/>
+            </http:request-builder>
+        </http:request>
+        <logger level="INFO" doc:name="Logger" message="Update BG record response data: #[payload]" />
+    </flow>
+    <flow name="post:/updateBPComment:patient-config">
+        <logger message="Update BP comments request data: #[payload]" level="INFO" doc:name="Logger" />
+        <object-to-string-transformer doc:name="Object to String" />
+        <http:request config-ref="SystemAPIHttp_Request_Configuration" path="${updateBPComment.implementation.path}" method="#[message.inboundProperties['http.method']]" doc:name="HTTP" >
+        	<http:request-builder>
+                <http:header headerName="AuthToken" value="#[message.inboundProperties.AuthToken]"/>
+                <http:header headerName="Content-Type" value="application/json"/>
+            </http:request-builder>
+        </http:request>
+        <logger level="INFO" doc:name="Logger" message="Submit BG comments response data: #[payload]" />
+    </flow>
+    
     <apikit:mapping-exception-strategy name="patient-apiKitGlobalExceptionMapping">
         <apikit:mapping statusCode="404">
             <apikit:exception value="org.mule.module.apikit.exception.NotFoundException" />
-            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
-            <set-payload value="{ &quot;message&quot;: &quot;Resource not found&quot; }" doc:name="Set Payload"/>
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property" />
+            <set-payload value="{ &quot;message&quot;: &quot;Resource not found&quot; }" doc:name="Set Payload" />
         </apikit:mapping>
         <apikit:mapping statusCode="405">
             <apikit:exception value="org.mule.module.apikit.exception.MethodNotAllowedException" />
-            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
-            <set-payload value="{ &quot;message&quot;: &quot;Method not allowed&quot; }" doc:name="Set Payload"/>
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property" />
+            <set-payload value="{ &quot;message&quot;: &quot;Method not allowed&quot; }" doc:name="Set Payload" />
         </apikit:mapping>
         <apikit:mapping statusCode="415">
             <apikit:exception value="org.mule.module.apikit.exception.UnsupportedMediaTypeException" />
-            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
-            <set-payload value="{ &quot;message&quot;: &quot;Unsupported media type&quot; }" doc:name="Set Payload"/>
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property" />
+            <set-payload value="{ &quot;message&quot;: &quot;Unsupported media type&quot; }" doc:name="Set Payload" />
         </apikit:mapping>
         <apikit:mapping statusCode="406">
             <apikit:exception value="org.mule.module.apikit.exception.NotAcceptableException" />
-            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
-            <set-payload value="{ &quot;message&quot;: &quot;Not acceptable&quot; }" doc:name="Set Payload"/>
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property" />
+            <set-payload value="{ &quot;message&quot;: &quot;Not acceptable&quot; }" doc:name="Set Payload" />
         </apikit:mapping>
         <apikit:mapping statusCode="400">
             <apikit:exception value="org.mule.module.apikit.exception.BadRequestException" />
-            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
-            <set-payload value="{ &quot;message&quot;: &quot;Bad request&quot; }" doc:name="Set Payload"/>
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property" />
+            <set-payload value="{ &quot;message&quot;: &quot;Bad request&quot; }" doc:name="Set Payload" />
         </apikit:mapping>
         <apikit:mapping statusCode="500">
             <apikit:exception value="java.net.ConnectException" />
-            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
-            <set-payload value="{ &quot;message&quot;: &quot;Try after some time&quot; }" doc:name="Set Payload"/>
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property" />
+            <set-payload value="{ &quot;message&quot;: &quot;Try after some time&quot; }" doc:name="Set Payload" />
         </apikit:mapping>
-    </apikit:mapping-exception-strategy>
+    </apikit:mapping-exception-strategy>    
 </mule>

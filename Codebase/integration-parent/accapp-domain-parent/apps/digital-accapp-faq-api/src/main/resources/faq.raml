@@ -1,0 +1,57 @@
+#%RAML 1.0
+title: FAQ API
+version: v1
+description: FAQ Module
+baseUri: http://acc.com/{version}/faq
+mediaType: application/json
+/getLists:
+  description: Get the FAQ of the patient
+  get:
+    queryParameters: 
+      device:
+        description: "Give the device"
+        required: true
+        minLength: 3
+        type: string
+        example: "Android"
+      deviceType:
+        description: "Give the device type"
+        required: true
+        type: string
+        example: "BG"
+    responses:
+      200:
+        body: 
+          application/json:
+            example: |
+               {
+                  "status": "true", 
+                  "message": "device list",
+                  "statusCode": 200,
+                  "data" : [
+                    {
+                      "id": 43,
+                      "sortOrder": 1,
+                      "question" : "How to add device",
+                      "type": "BP",
+                      "answer" : "lorem ipsum doller shit amet"
+                    },
+                    {
+                      "id": 32,
+                      "sortOrder": 2,
+                      "question" : "How to remove device",
+                      "type": "BG",
+                      "answer" : "lorem ipsum doller shit amet"
+                    }
+                  ]
+                }
+      403:
+        body: 
+          application/json:
+            example: |
+               {
+                 "status": false,
+                 "errorMessage": "Unable to get the FAQ",
+                 "errorCode": "105",
+                 "statusCode": 403
+                }

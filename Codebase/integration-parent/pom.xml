@@ -1048,6 +1048,7 @@
 			</activation>
 			<modules>
 				<module>accapp-domain-parent</module>
+				<module>common-flow-fragments</module>
 			</modules>
 		</profile>	
 

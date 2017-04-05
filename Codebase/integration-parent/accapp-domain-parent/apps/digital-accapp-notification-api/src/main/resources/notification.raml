@@ -1,0 +1,88 @@
+#%RAML 1.0
+title: Notification and Plan API
+version: v1
+description: Notification Module
+baseUri: http://acc.com/{version}/notification
+mediaType: application/json
+/getList:
+    description: To get the all notification
+    get:
+      queryParameters: 
+        device:
+          description: "Give the device name"
+          required: true
+          type: datetime-only
+          example: 2015-07-04T21:00:00
+      responses:
+        200:
+          body: 
+            application/json:
+              example: |
+                {
+                  "status": true,
+                  "message": "notification list",
+                  "statusCode": 200
+                  "data": [
+                    {
+                      "id" : 1 
+                       "subject": "Notification 1",
+                       "dateTime": <Date time in UTC>,
+                       "shortDescription": "",
+                       "imageURL": ""
+                    },
+                    {
+                      "id" : 2 
+                       "subject": "Notification 2",
+                       "dateTime": <Date time in UTC>,
+                       "shortDescription": "",
+                       "imageURL": ""
+                    },
+                  ]
+                }
+        403:
+           body: 
+            application/json:
+              example: |
+               {
+                  "status": false,
+                   "errorMessage": "Unable to fetch the list",
+                   "errorCode": "105",
+                   "statusCode": 403
+               }
+/getNotificationById:
+  get:
+    queryParameters: 
+      notificationId:
+        description: "Give the notification ID"
+        required: true
+        minLength: 3
+        type: string
+        example: "23455"
+    responses:
+        200:
+          body: 
+            application/json:
+              example: |
+                {
+                   "status": true,
+                    "message": "notification list",
+                    "statusCode": 200,
+                    "data": 
+                      {
+                        "id" : 1 
+                         "subject": "Notification 1",
+                         "imageURL": "",
+                         "message": "Notification 1 Message",
+                         "datetime": <Date time in UTC>
+                      }
+                }
+        403:
+           body: 
+            application/json:
+              example: |
+               {
+                  "status": false,
+                   "errorMessage": "Unable to get  the notification details",
+                   "errorCode": "105",
+                   "statusCode": 403
+               } 

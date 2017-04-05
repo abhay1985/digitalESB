@@ -2,9 +2,9 @@
 title: User API
 version: v1
 description: User Module
-baseUri: http://acc.com/user-api/{version}
+baseUri: http://acc.com/{version}/user
 mediaType: application/json
-/validateUser:
+/login:
   description: Validate the user credential
   post:
     body: 
@@ -42,7 +42,7 @@ mediaType: application/json
                   "errorCode": "1001",
                   "statusCode": "401"
                 }
-/getUserById:
+/getPatientById:
   description: Get user detail by there ID
   get:
     queryParameters: 
@@ -52,43 +52,31 @@ mediaType: application/json
         minLength: 3
         type: string
         example: "23455"
-    responses:
+    responses: 
+      201:
+        body: 
+          application/json:
+            example: |
+              "test"
       200:
         body: 
           application/json:
             example: | 
               {
-                "status": "true",
-                "message": "User info fetched",
-                "statusCode": "200",
-                "data": {
-                   "patientId": "1",
-                   "name": "Ashish",
-                   "userEmail": "abc@xyz.com",
-                   "profilePic": "http:///www.test.com/test.jpg",
-                   "ethnicOrigin": "",
-                   "occupation": "",
-                   "companyName": "",
-                   "languages": "English, Urdu",
-                   "DOB": "1984-10-23",
-                   "height": "165 cms",
-                   "weight": "65 kg",
-                   "contactTime": "",
-                   "maritalStatus": "",
-                   "homeAddress": "",
-                   "physicalChallenged": "Yes",
-                   "challengesDetail": "",
-                    "foodAllergy": "No",
-                   "drugAllergy": "Yes",
-                   "drugAllergyDetail": "",
-                   "wakeupTime": "",
-                   "breakfastTime": "",
-                   "dinnerTime": "",
-                   "bedTime": "",
-                   "extraField1": "",
-                   "extraField2": "",
-                   "extraField3": "",
-                  }
+               "status": "true",
+                "user_id": 1,
+                 "user_group": 1,
+                 "details": {
+                    "name": "Amit Singh",
+                    "email": "",
+                   },
+                 "status": "Active",
+                 "last_login": "YYYY-MM-DD H:i:s", "output_param1": "",
+                 "output_param2": "",
+                 "output_param3": "",
+                 "output_param4": ""
+               "message" : "Success",
+               "statusCode": "200"
                 }
       401:
         body: 
@@ -100,7 +88,7 @@ mediaType: application/json
                  "errorCode": "1002",
                  "statusCode": "401"
                 }
-/sendOTP:
+/forgotPassword:
     description: Send the OTP to the target system
     post:
       body: 
@@ -131,7 +119,7 @@ mediaType: application/json
                    "errorCode": "1001",
                    "statusCode": "401"
                 }
-/verficationOTP:
+/verifyOTP:
     description: Validate the OTP
     post:
       body: 
@@ -139,11 +127,9 @@ mediaType: application/json
           description: Provide the login information
           example: |
             { 
-              "patientId": 32323,
-               "OTP": "434343",
-               "otpType": 1,
-               "deviceId": "3333343",
-               "device": "Andriod"
+              "patientId": "32323",
+              "OTP": "434343",
+              "otpType": "1"
             }
       responses:
         200:
@@ -165,7 +151,7 @@ mediaType: application/json
                  "errorCode": "1001",
                  "statusCode": "401" 
                }
-/resetPasswordOTP:
+/resetPassword:
     description: Reset Password after correct OTP
     post:
       body: 
@@ -196,7 +182,7 @@ mediaType: application/json
                  "errorCode": "1002",
                  "statusCode": "403"
                 }
-/chkAgreementStatus:
+/getAgreementStatus:
     description: Check Agreement Status
     get:
       queryParameters: 
@@ -227,8 +213,8 @@ mediaType: application/json
                  "errorCode": "1002",
                  "statusCode": "401"
                 }
-/takeAgreement:
-    description: Agreement Taking API
+/saveAgreementStatus:
+    description: Agreement saving API
     post:
       body: 
         application/json:
@@ -290,7 +276,7 @@ mediaType: application/json
                   "errorCode": "105",
                   "statusCode": "400"
                  } 
-/submitFormForGuest:
+/guestSignUp:
     description: Submit the guest from to the target system
     post:
       body: 
@@ -323,34 +309,35 @@ mediaType: application/json
                    "errorCode": "1001",
                    "statusCode": "401"
                 }
-/verficationOTPForEmail:
-    description: Validate the OTP for the Email
-    post:
-      body: 
-        application/json:
-          description: Provide the detail information to verify email
-          example: |
-            { 
-              "patientId": 32323,
-              "OTPCode": "434556"
-            }
-      responses:
-        200:
-          body: 
-            application/json:
-              example: |
-                {
-                  "status": true,
-                  "message": "OTP code matched successfully",
-                  "statusCode": 200 
-                }
-        403:
-           body: 
-            application/json:
-              example: |
+/logoutApp:
+  description: Logout from the device
+  post:
+    body: 
+      application/json:
+        description: The input paylod from logout the system.
+        example: |
+          {
+            "patientId": 32323,
+            "deviceId": "",
+            "device": "Andriod"
+          }          
+    responses:
+      200:
+        body: 
+          application/json:
+            example: |
                {
-                  "status": false,
-                   "errorMessage": "Unable to match the OTP code",
-                   "errorCode": "105",
-                   "statusCode": 403
-               }
+                    "status": true,
+                    "message": "logout successful",
+                    "statusCode": 200
+                }
+      403:
+        body: 
+          application/json:
+            example: |
+               {
+                 "status": false,
+                 "errorMessage": "Unable to logout from the system",
+                 "errorCode": "105",
+                 "statusCode": 403
+                }

@@ -1,0 +1,42 @@
+#%RAML 1.0
+title: Device API
+version: v1
+description: Device Module
+baseUri: http://acc.com/{version}/device
+mediaType: application/json
+/versionCheck:
+  description: Get the current server API version
+  get:
+    queryParameters: 
+      device:
+        description: "Give the device name"
+        required: true
+        minLength: 3
+        type: string
+        example: "Android"
+      version:
+        description: "Give the version number"
+        required: true
+        type: number
+        example: 1.03
+    responses:
+      200:
+        body: 
+          application/json:
+            example: |
+               {
+                 "status" : true,
+                 "updateRequired": "Yes"
+                 "message" : "update needed",
+                 "statusCode": 200                   
+                }
+      401:
+        body: 
+          application/json:
+            example: |
+               {
+                  "status": false,
+                   "errorMessage": "Unable to get the API Version Number",
+                   "errorCode": "105",
+                   "statusCode": 401
+                }

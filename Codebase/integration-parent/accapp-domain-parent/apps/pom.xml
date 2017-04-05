@@ -19,7 +19,11 @@ should be created and kept here.]]>
 		<module>digital-accapp-doctor-api</module>	
         <module>digital-accapp-patient-api</module>	
         <module>digital-accapp-user-api</module>	
-		<module>digital-accapp-generic-api</module>
-		<module>digital-accapp-notification-api</module>
+		<module>digital-accapp-contact-api</module>
+		<module>digital-accapp-notification-api</module>	
+        <module>digital-accapp-cms-api</module>	
+        <module>digital-accapp-faq-api</module>	
+		<module>digital-accapp-device-api</module>
+		<module>digital-accapp-plan-api</module>
 	</modules>
 </project>

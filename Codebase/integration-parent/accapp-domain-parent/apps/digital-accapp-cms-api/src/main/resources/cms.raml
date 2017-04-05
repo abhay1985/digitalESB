@@ -1,0 +1,46 @@
+#%RAML 1.0
+title: CMS API
+version: v1
+description: CMS Module
+baseUri: http://acc.com/{version}/cms
+mediaType: application/json
+/homeBanners:
+  description: To home banners details 
+  get:
+    queryParameters: 
+      requestType:
+        description: "Give the request type"
+        required: true
+        type: string
+        example: "Promotional"
+    responses:
+      200:
+        body: 
+          application/json:
+            example: |
+              {
+                "status": true,
+                "statusCode": 200,
+                "Banners": [
+                 {
+                  "bannerId": 1,
+                  "imageURL": "http://www.google.com/1.jpg",
+                  "linkURL": "http://www.google.com"
+                 },
+                 {
+                  "bannerId": 2,
+                  "imageURL": "http://www.google.com/2.jpg",
+                  "linkURL": ""
+                 }
+                ]
+              }
+      403:
+         body: 
+          application/json:
+            example: |
+             {
+                "status": false,
+                 "errorMessage": "Unable to get the details",
+                 "errorCode": "105",
+                 "statusCode": 403
+             }
